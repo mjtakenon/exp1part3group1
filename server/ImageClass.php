@@ -296,9 +296,9 @@ class ImageAnalizer
         echo ($xpos).",";
         echo ($ypos)."<br>\n";
 
-        for($y = 0; $y < $ysize-1; $y++)
+        for($y = 0; $y < $ysize; $y++)
         {
-            for($x = 0; $x < $xsize-1; $x++)
+            for($x = 0; $x < $xsize; $x++)
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
