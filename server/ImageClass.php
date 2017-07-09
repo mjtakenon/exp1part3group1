@@ -27,7 +27,7 @@ class BaseImage
 /*RGBのためのクラス*/
 class RGB
 {
-    private $RGBColor = array('Red' => 0,'Green' => 0,'Blue' => 0,'Alpha' => 0);
+    private $RGBColor = array('Red' => 0,'Green' => 0,'Blue' => 0);
 
     public function getRGB(){
         return $this->RGBColor;
@@ -42,15 +42,11 @@ class RGB
     public function getB(){
         return $this->RGBColor['Blue'];
     }
-    public function getA(){
-        return $this->RGBColor['Alpha'];
-    }
 
-    public function setRGB($R,$G,$B,$Alpha){
+    public function setRGB($R,$G,$B){
         $this->RGBColor['Red'] = $R;
         $this->RGBColor['Green'] = $G;
         $this->RGBColor['Blue'] = $B;
-        $this->RGBColor['Alpha'] = $Alpha;
     }
     public function setR($R){
         $this->RGBColor['Red'] = $R;
@@ -61,9 +57,6 @@ class RGB
     public function setB($B){
         $this->RGBColor['Blue'] = $B;
     }
-    public function setA($A){
-        $this->RGBColor['Alpha'] = $A;
-    }
     
 }
 
@@ -71,19 +64,60 @@ class RGB
 class ReciveImage extends BaseImage
 {
     private $division = array('X' => 0,'Y' => 0);
-    private $pixColor = array();
+    private $size = array('width' => 0, 'height' => 0);
+    private $ext = "";
+    private $pixColor = null;
 
+    
+    function __construct($w,$h,$e,$dimg){
+        parent::__construct($w,$h,$e);
+
+        $this->setDivision($dimg[0],count($dimg));
+        $this->setSize($w,$h);
+        $this->setExt($e);
+
+        for ($i=0; $i < $dy; $i++) {
+            $this->pixColor = $dimg;
+            //$this->pixColor[$i] = array_fill(0,$dx,new RGB());
+        }
+    }
+    
     public function setDivision($x,$y)
     {
         $this->division['X'] = $x;
         $this->division['Y'] = $y;
     }
-    function __construct($w,$h,$e,$dx,$dy){
-        parent::__construct($w,$h,$e);
-        $this->setDivision($dx,$dy);
-        for ($i=0; $i < $dy; $i++) {
-            $this->pixColor[$i] = array_fill(0,$dx,new RGB());
-        }
+    public function setSize($w,$h)
+    {
+        $this->size['width'] = $w;
+        $this->size['height'] = $h;
+    }
+    public function setExt($e)
+    {
+        $this->ext = $e;
+    }
+    public function setPixcolor($dimg)
+    {
+        $this->setDivision($dimg[0],count($dimg));
+        $this->pixColor = $dimg;
+    }
+
+
+    public function getDivision()
+    {
+        return $this->division;
+    }
+    public function setSize()
+    {
+        return $this->size['width'];
+    }
+    public function setExt()
+    {
+        return $this->ext;
+    }
+    public function getPixcolor()
+    {
+        return $this->pixColor;
     }
 }
 
@@ -183,13 +217,13 @@ class ImageAnalizer
             
             $tmpRGB = array();
 
-            for($ii = 0; $ii < $divheight; $ii++)
+            for($x = 0; $x < $divheight; $x++)
             {
-                $tmpRGB[$ii] = array();
+                $tmpRGB[$x] = array();
 
-                for($jj = 0; $jj < $divwidth; $jj++)
+                for($y = 0; $y < $divwidth; $y++)
                 {
-                    $tmpRGB[$ii][$jj] = new RGB();
+                    $tmpRGB[$x][$y] = new RGB();
                 }
             }
             echo "calc ok<br>";
@@ -212,19 +246,18 @@ class ImageAnalizer
                 }
             }
             echo "calc ok<br>";
-            for($ii = 0; $ii < $divheight; $ii++)
+            for($x = 0; $x < $divheight; $x++)
             {
-                for($jj = 0; $jj < $divwidth; $jj++)
+                for($y = 0; $y < $divwidth; $y++)
                 {
-                    $tmpRGB[$ii][$jj]->setR($tmpRGB[$ii][$jj]->getR()/($divedheight*$divedwidth));
-                    $tmpRGB[$ii][$jj]->setG($tmpRGB[$ii][$jj]->getG()/($divedheight*$divedwidth));
-                    $tmpRGB[$ii][$jj]->setB($tmpRGB[$ii][$jj]->getB()/($divedheight*$divedwidth));
-                    var_dump($tmpRGB[$ii][$jj]->getRGB());
+                    $tmpRGB[$x][$y]->setR($tmpRGB[$x][$y]->getR()/($divedheight*$divedwidth));
+                    $tmpRGB[$x][$y]->setG($tmpRGB[$x][$y]->getG()/($divedheight*$divedwidth));
+                    $tmpRGB[$x][$y]->setB($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth));
                 }
             }
             echo "calc ok<br>";
 
-            $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
+            $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$tmpRGB);
         }
     }
 
