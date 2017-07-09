@@ -293,14 +293,13 @@ class ImageAnalizer
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
         $sumrgb = new RGB();
+        echo ($xpos).",";
+        echo ($ypos)."<br>\n";
         for($y = 0; $y < $ysize; $y++)
         {
             for($x = 0; $x < $xsize; $x++)
             {
-                echo ($xpos+$x).",";
-                echo ($ypos+$y)."<br>\n";
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
-                echo $rgb."<br>\n";
                 $colors = imagecolorsforindex($image,$rgb);
                 $sumrgb->setR($sumrgb->getR()+$colors["red"]);
                 $sumrgb->setG($sumrgb->getG()+$colors["green"]);
