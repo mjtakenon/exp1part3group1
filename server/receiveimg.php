@@ -33,8 +33,17 @@
 					echo "width=".$width."<br>";
 					echo "height=".$height."<br>";
 					echo "ext=".$ext."<br>";
+					
+					$divwidth = 2;
+					$divheight = 2;
+
+					echo "divwidth=".$divwidth."<br>";
+					echo "divheight=".$divheight."<br>";
+
+					echo "divedwidth=".$width/$divwidth,"<br>";
+					echo "divedheight=".$width/$divheight,"<br>";
+					
 				}
-				
 			}
 			else 
 			{
