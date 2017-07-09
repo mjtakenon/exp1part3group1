@@ -88,10 +88,9 @@
 							{
 								for($x = 0; $x < $divedwidth; $divx++)
 								{
-									$rgb = imagecolorat($_FILES["upfile"]["tmp_name"],$x+$divx*$divedwidth,$y+$divy*$divedheight);
-									$colors = imagecolorsforindex($_FILES["upfile"]["tmp_name"],$rgb);
+									$rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
+									$colors = imagecolorsforindex($image,$rgb);
 									var_dump($colors);
-									var_dump($rgb);
 								}
 							}
 						}
