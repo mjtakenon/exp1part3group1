@@ -145,7 +145,6 @@ class ImageAnalizer
 
     public function __construct($divwidth,$divheight)
     {
-        echo "construct<br>";
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
         switch($mime_type)
         {
@@ -226,7 +225,6 @@ class ImageAnalizer
                     $tmpRGB[$x][$y] = new RGB();
                 }
             }
-            echo "calc ok<br>";
 
             for($divy = 0; $divy < $divheight; $divy++)
             {
@@ -245,7 +243,6 @@ class ImageAnalizer
                     }
                 }
             }
-            echo "calc ok<br>";
             for($x = 0; $x < $divheight; $x++)
             {
                 for($y = 0; $y < $divwidth; $y++)
@@ -255,9 +252,10 @@ class ImageAnalizer
                     $tmpRGB[$x][$y]->setB($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth));
                 }
             }
-            echo "calc ok<br>";
 
             $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$tmpRGB);
+
+            echo "calc ok<br>";
         }
     }
 
