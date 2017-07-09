@@ -27,15 +27,16 @@ class BaseImage
 /*RGBのためのクラス*/
 class RGB
 {
-    private $RGBColor = array('Red' => 0,'Green' => 0,'Blue' => 0);
+    private $RGBColor = array('Red' => 0,'Green' => 0,'Blue' => 0,'Alpha' => 0);
 
     public function getRGB(){
         return $RGBColor;
     }
-    public function setRGB($R,$G,$B){
+    public function setRGB($R,$G,$B,$Alpha){
         $this->RGBColor['Red'] = $R;
         $this->RGBColor['Green'] = $G;
         $this->RGBColor['Blue'] = $B;
+        $this->RGBColor['Alpha'] = $Alpha;
     }
 }
 
