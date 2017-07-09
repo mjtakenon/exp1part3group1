@@ -192,6 +192,7 @@ class ImageAnalizer
                     $tmpRGB[$ii][$jj] = new RGB();
                 }
             }
+            echo "calc ok<br>";
 
             for($divy = 0; $divy < $divheight; $divy++)
             {
@@ -215,6 +216,7 @@ class ImageAnalizer
                     }
                 }
             }
+            echo "calc ok<br>";
 
             for($ii = 0; $ii < $divheight; $ii++)
             {
