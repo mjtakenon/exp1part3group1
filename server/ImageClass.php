@@ -193,7 +193,7 @@ class ImageAnalizer
                 $tmpRGB[$y] = array();
                 for($x = 0; $x < $divwidth; $x++)
                 {
-                    $tmpRGB[$x][$y] = new RGB();
+                    $tmpRGB[$y][$x] = new RGB();
                 }
             }
 
@@ -205,11 +205,13 @@ class ImageAnalizer
                 {
                     echo $x."<br>\n";
                     $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight);
-                    $tmpRGB[$x][$y]->setR($rgb->getR());
+                    echo $x."<br>\n";
+                    var_dump($rgb);
+                    $tmpRGB[$y][$x]->setR($rgb->getR());
                     echo $rgb->getR().":R<br>\n";
-                    $tmpRGB[$x][$y]->setG($rgb->getG());
+                    $tmpRGB[$y][$x]->setG($rgb->getG());
                     echo $rgb->getG().":G<br>\n";
-                    $tmpRGB[$x][$y]->setB($rgb->getB());
+                    $tmpRGB[$y][$x]->setB($rgb->getB());
                     echo $rgb->getB().":B<br>\n";
                 }
             }
