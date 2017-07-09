@@ -236,7 +236,7 @@ class ImageAnalizer
 
             echo "ba-ka : $width,$height,$ext,$tmpRGB\n";
 
-            $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$tmpRGB);
+            $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$tmpRGB);
 
             echo "calc ok<br>\n";
         }
