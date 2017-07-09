@@ -189,13 +189,12 @@ class ImageAnalizer
                     $tmpRGB[$x][$y] = new RGB();
                 }
             }
-            echo "array";
 
             for($divy = 0; $divy < $divheight; $divy++)
             {
                 for($divx = 0; $divx < $divwidth; $divx++)
                 {
-                    tmpRGB[$divy][$divx]->setRGB(getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
+                    tmpRGB[$divy][$divx]->setRGB($this->getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
                 }
             }
             echo "sum";
@@ -261,7 +260,6 @@ class ImageAnalizer
 
     private function createImage($mime_type)
     {
-        echo $mime_type;
         switch($mime_type)
         {
             case IMAGETYPE_JPEG:
