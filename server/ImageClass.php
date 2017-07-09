@@ -199,13 +199,11 @@ class ImageAnalizer
 
     private function saveImg()
     {
-        echo "a<br>";
-        
         $save_dir = '\\images\\';
         $save_filename = date('YmdHis');
         $save_basename = $save_filename. '.'. $ext;
         $save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
-        echo "b<br>";
+
         while (file_exists($save_path))
         {
             $save_filename .= mt_rand(0, 9);
@@ -213,10 +211,9 @@ class ImageAnalizer
             $save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
         }
         
-        echo "c<br>";
         if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$save_path))
         {
-            echo "image save failed<br>";
+            echo "image save failed".$save_path."<br>";
         }
         else
         {
