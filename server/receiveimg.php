@@ -43,10 +43,12 @@
 						$save_basename = $save_filename. '.'. $ext;
 						$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
 					}
-					if(!saveImage($_FILES["upfile"]["tmp_name"],$save_path,$ext))
+					//if(!saveImage($_FILES["upfile"]["tmp_name"],$save_path,$ext))
+					if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$save_path))
 					{
 						echo "image save failed<br>";
 					}
+					chmod($path,0644);
 
 					echo "path=".$save_path."<br>";
 					
@@ -125,7 +127,8 @@
 					case "png" :
 						$result = imagePNG($img, $file);
 						break;
-					default : return false; break;
+					default : return false;
+					break;
 				}
 				$res = chmod($file, 0755);
 				return $result;
