@@ -68,7 +68,6 @@ class ReciveImage extends BaseImage
     private $ext = "";
     private $pixColor = null;
 
-    
     function __construct($w,$h,$e,$dimg){
         parent::__construct($w,$h,$e);
 
@@ -101,7 +100,6 @@ class ReciveImage extends BaseImage
         $this->setDivision($dimg[0],count($dimg));
         $this->pixColor = $dimg;
     }
-
 
     public function getDivision()
     {
@@ -146,23 +144,8 @@ class ImageAnalizer
     public function __construct($divwidth,$divheight)
     {
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
-        switch($mime_type)
-        {
-            case IMAGETYPE_JPEG:
-                $ext = "jpg";
-                break;
-            case IMAGETYPE_PNG:
-                $ext = "png";
-                break;
-            case IMAGETYPE_GIF:
-                $ext = "gif";
-                break;
-            case IMAGETYPE_BMP:
-                $ext = "bmp";
-                break;
-            default:
-                $ext = "other";
-        }
+        
+        $ext = $this->isImageFile();
 
         if($ext === "other")
         {
@@ -186,24 +169,7 @@ class ImageAnalizer
             echo "divedwidth=".$divedwidth."<br>";
             echo "divedheight=".$divedheight."<br>";
 
-            $image = imagecreatefromjpeg($this->save_path);
-            
-            switch($mime_type){
-                case IMAGETYPE_JPEG:
-                    $image = imagecreatefromjpeg($this->save_path);
-                    break;
-                case IMAGETYPE_PNG:
-                    $image = imagecreatefrompng($this->save_path);
-                    break;
-                case IMAGETYPE_GIF:
-                    $image = imagecreatefromgif($this->save_path);
-                    break;
-                case IMAGETYPE_BMP:
-                    $image = imagecreatefrombmp($this->save_path);
-                    break;
-                default:
-                    $ext = "other";
-            }
+            $image = createImage();
 
             if(!$image)
             {
@@ -283,6 +249,37 @@ class ImageAnalizer
         }
         chmod($this->save_path,0644);
     }
+    
+    private function isImageFile($mime_type)
+    {
+        switch($mime_type)
+        {
+            case IMAGETYPE_JPEG:
+                return "jpg";
+            case IMAGETYPE_PNG:
+                return "png";
+            case IMAGETYPE_GIF:
+                return "gif";
+            case IMAGETYPE_BMP:
+                return "bmp";
+            default:
+                return"other";
+        }
+    }
+    private function createImage($mime_type)
+    {
+        switch($mime_type)
+        {
+            case IMAGETYPE_JPEG:
+                return imagecreatefromjpeg($this->save_path);
+            case IMAGETYPE_PNG:
+                return imagecreatefrompng($this->save_path);
+            case IMAGETYPE_GIF:
+                return imagecreatefromgif($this->save_path);
+            case IMAGETYPE_BMP:
+                return imagecreatefrombmp($this->save_path);
+        }
+    }    
 }
 
 ?>
