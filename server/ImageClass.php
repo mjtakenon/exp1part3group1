@@ -13,13 +13,13 @@ class BaseImage
         $this->ext = $e;
     }
     public function getWidth(){
-        return $width;
+        return $this->width;
     }
     public function getHeight(){
-        return $height;
+        return $this->height;
     }
     public function getExt(){
-        return $ext;
+        return $this->ext;
     }
 
 }
@@ -30,7 +30,7 @@ class RGB
     private $RGBColor = array('Red' => 0,'Green' => 0,'Blue' => 0,'Alpha' => 0);
 
     public function getRGB(){
-        return $RGBColor;
+        return $this->RGBColor;
     }
     
     public function getR(){
@@ -207,11 +207,6 @@ class ImageAnalizer
                             $tmpRGB[$divy][$divx]->setR($tmpRGB[$divy][$divx]->getR()+$colors["red"]);
                             $tmpRGB[$divy][$divx]->setG($tmpRGB[$divy][$divx]->getG()+$colors["green"]);
                             $tmpRGB[$divy][$divx]->setB($tmpRGB[$divy][$divx]->getB()+$colors["blue"]);
-                            //$tmpRGB[$divy][$divx]->setA($tmpRGB[$divy][$divx]->getA()+$colors["alpha"]);
-                            // $tmpRGB[$divy][$divx]["Red"] += $colors["red"];
-                            // $tmpRGB[$divy][$divx]["Green"] += $colors["green"];
-                            // $tmpRGB[$divy][$divx]["Blue"] += $colors["blue"];
-                            // $tmpRGB[$divy][$divx]["Alpha"] += $colors["alpha"];
                         }
                     }
                 }
@@ -225,7 +220,6 @@ class ImageAnalizer
                     $tmpRGB[$ii][$jj]->setG($tmpRGB[$ii][$jj]->getG()/($divedheight*$divedwidth));
                     $tmpRGB[$ii][$jj]->setB($tmpRGB[$ii][$jj]->getB()/($divedheight*$divedwidth));
                     var_dump($tmpRGB[$ii][$jj]->getR());
-                    //$tmpRGB[$divy][$divx]->setA($tmpRGB[$divy][$divx]->getA()/$divedheight*$divedwidth);
                 }
             }
             echo "calc ok<br>";
