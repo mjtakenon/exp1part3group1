@@ -300,6 +300,7 @@ class ImageAnalizer
                 echo ($xpos+$x).",";
                 echo ($ypos+$y)."<br>\n";
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
+                echo $rgb."<br>\n";
                 $colors = imagecolorsforindex($image,$rgb);
                 $sumrgb->setR($sumrgb->getR()+$colors["red"]);
                 $sumrgb->setG($sumrgb->getG()+$colors["green"]);
