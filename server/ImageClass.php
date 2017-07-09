@@ -84,6 +84,7 @@ class ImageAnalizer
 
     public function __construct($divwidth,$divheight)
     {
+        echo "construct<br>";
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
         switch($mime_type)
         {
