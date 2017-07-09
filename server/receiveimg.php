@@ -40,8 +40,8 @@
 					echo "divwidth=".$divwidth."<br>";
 					echo "divheight=".$divheight."<br>";
 
-					echo "divedwidth=".$width/$divwidth,"<br>";
-					echo "divedheight=".$width/$divheight,"<br>";
+					echo "divedwidth=".floor($width/$divwidth),"<br>";
+					echo "divedheight=".floor($width/$divheight),"<br>";
 					
 				}
 			}
