@@ -7,12 +7,9 @@
 	<body>
 		<h1>結果だっていってるだろぉぉぉぉぉん！？</h1>
 		<?php
-
-			var_dump(gd_info());
-
+		var_dump(gd_info());
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"])){
 				list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
-
 				
 				switch($mime_type){
 					case IMAGETYPE_JPEG:
@@ -25,12 +22,12 @@
 						$ext = "gif";
 						break;
 					default:
-						$ext = "other"
+						$ext = "other";
 						break;
 				}
-				if($ext == "other")
+				if($ext === "other");
 				{
-					echo "画像ファイルを選択してください。"
+					echo "画像ファイルを選択してください。";
 				}
 				else
 				{
