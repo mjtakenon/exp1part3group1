@@ -189,6 +189,7 @@ class ImageAnalizer
                     $tmpRGB[$x][$y] = new RGB();
                 }
             }
+            echo "array";
 
             for($divy = 0; $divy < $divheight; $divy++)
             {
@@ -197,6 +198,7 @@ class ImageAnalizer
                     tmpRGB[$divy][$divx]->setRGB(getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
                 }
             }
+            echo "sum";
 
             for($y = 0; $y < $divheight; $y++)
             {
@@ -207,7 +209,7 @@ class ImageAnalizer
                     $tmpRGB[$x][$y]->setB($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth));
                 }
             }
-
+            echo "div";
             $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$tmpRGB);
 
             echo "calc ok<br>";
