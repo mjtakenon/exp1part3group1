@@ -45,9 +45,19 @@
 					
 					echo "divedwidth=".$divedwidth."<br>";
 					echo "divedheight=".$divedheight."<br>";
-					
-					$rgb = imagecolorat($_FILES["upfile"]["tmp_name"],1,1);
-					var_dump($_FILES["upfile"]["tmp_name"]);
+
+					//ファイル保存
+					$save_dir = 'images/';
+					$save_filename = date('YmdHis');
+					$save_basename = $save_filename. '.'. $ext;
+					$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
+					while (file_exists($save_path)) { // 同名ファイルがあればファイル名を変更する
+						$save_filename .= mt_rand(0, 9);
+						$save_basename = $save_filename. '.'. $ext;
+						$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
+					}
+
+					echo $save_path;
 					
 					//$files = $_FILES["upfile"]["tmp_name"];
 					/*
