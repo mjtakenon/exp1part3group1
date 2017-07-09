@@ -50,7 +50,6 @@ class RGB
     }*/
     
     public function setRGB($rgb){
-        var_dump($rgb);
         $this->RGBColor['Red'] = $rgb->getR();
         $this->RGBColor['Green'] = $rgb->getG();
         $this->RGBColor['Blue'] = $rgb->getB();
