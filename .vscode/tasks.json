@@ -1,0 +1,7 @@
+{
+    "version": "0.1.0",
+    "command": "git",
+    "isShellCommand": true,
+    "showOutput": "always", 
+    "args": ["commit","-m","\"fix\""]
+}
