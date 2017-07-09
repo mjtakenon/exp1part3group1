@@ -46,6 +46,8 @@
 					echo "divedwidth=".$divedwidth."<br>";
 					echo "divedheight=".$divedheight."<br>";
 					
+					$files = $_FILES["upfile"]["tmp_name"];
+
 					for($divy = 0; $divy < $divheight; $divy++)
 					{
 						for($divx = 0; $divx < $divwidth; $divx++)
@@ -55,8 +57,9 @@
 								for($x = 0; $x < $divedwidth; $divx++)
 								{
 									$rgb = imagecolorat($_FILES["upfile"]["tmp_name"],$x+$divx*$divedwidth,$y+$divy*$divedheight);
-									$colors = imagecolorsforindex($_FILES["upfile"]["tmp_name"],$rgb);
-									var_dump($colors);
+									//$colors = imagecolorsforindex($_FILES["upfile"]["tmp_name"],$rgb);
+									//var_dump($colors);
+									var_dump($rgb);
 								}
 							}
 						}
