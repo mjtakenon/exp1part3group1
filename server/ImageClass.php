@@ -210,7 +210,7 @@ class ImageAnalizer
                     $tmpRGB[$x][$y]->setB($rgb->getB());
                 }
             }
-            echo "sum";
+            echo "sum\n";
 
 
             for($y = 0; $y < $divheight; $y++)
@@ -222,11 +222,11 @@ class ImageAnalizer
                     $tmpRGB[$x][$y]->setB($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth));
                 }
             }
-            echo "div";
+            echo "div\n";
 
             $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$tmpRGB);
 
-            echo "calc ok<br>";
+            echo "calc ok<br>\n";
         }
     }
 
