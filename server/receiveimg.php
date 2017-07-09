@@ -62,7 +62,7 @@
 					echo "divedwidth=".$divedwidth."<br>";
 					echo "divedheight=".$divedheight."<br>";
 					
-					$image = null;
+					$image;
 					
 					switch($mime_type){
 						case IMAGETYPE_JPEG:
