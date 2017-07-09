@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>なんか上げとけ</title>
+		<title>さーばーんなちほーへよーこそー</title>
 	</head>
 	<body>
 		<h1>結果だっていってるだろぉぉぉぉぉん！？</h1>
