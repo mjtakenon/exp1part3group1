@@ -32,12 +32,39 @@ class RGB
     public function getRGB(){
         return $RGBColor;
     }
+    
+    public function getR(){
+        return $this->RGBColor['Red'];
+    }
+    public function getG(){
+        return $this->RGBColor['Green'];
+    }
+    public function getB(){
+        return $this->RGBColor['Blue'];
+    }
+    public function getA(){
+        return $this->RGBColor['Alpha'];
+    }
+
     public function setRGB($R,$G,$B,$Alpha){
         $this->RGBColor['Red'] = $R;
         $this->RGBColor['Green'] = $G;
         $this->RGBColor['Blue'] = $B;
         $this->RGBColor['Alpha'] = $Alpha;
     }
+    public function setR($R){
+        $this->RGBColor['Red'] = $R;
+    }
+    public function setG($G){
+        $this->RGBColor['Green'] = $G;
+    }
+    public function setB($B){
+        $this->RGBColor['Blue'] = $B;
+    }
+    public function setA($A){
+        $this->RGBColor['Alpha'] = $A;
+    }
+    
 }
 
 //アップロード
@@ -144,6 +171,7 @@ class ImageAnalizer
                 default:
                     $ext = "other";
             }
+
             if(!$image)
             {
                 echo "image open failed<br>";
@@ -175,10 +203,14 @@ class ImageAnalizer
                         {
                             $rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
                             $colors = imagecolorsforindex($image,$rgb);
-                            $tmpRGB[$divy][$divx]["Red"] += $colors["red"];
-                            $tmpRGB[$divy][$divx]["Green"] += $colors["green"];
-                            $tmpRGB[$divy][$divx]["Blue"] += $colors["blue"];
-                            $tmpRGB[$divy][$divx]["Alpha"] += $colors["alpha"];
+                            $tmpRGB[$divy][$divx].setR($tmpRGB[$divy][$divx].getR()+$colors["red"]);
+                            $tmpRGB[$divy][$divx].setG($tmpRGB[$divy][$divx].getG()+$colors["green"]);
+                            $tmpRGB[$divy][$divx].setB($tmpRGB[$divy][$divx].getB()+$colors["blue"]);
+                            $tmpRGB[$divy][$divx].setA($tmpRGB[$divy][$divx].getA()+$colors["alpha"]);
+                            // $tmpRGB[$divy][$divx]["Red"] += $colors["red"];
+                            // $tmpRGB[$divy][$divx]["Green"] += $colors["green"];
+                            // $tmpRGB[$divy][$divx]["Blue"] += $colors["blue"];
+                            // $tmpRGB[$divy][$divx]["Alpha"] += $colors["alpha"];
                         }
                     }
                 }
@@ -188,14 +220,14 @@ class ImageAnalizer
             {
                 for($jj = 0; $jj < $divwidth; $jj++)
                 {
-                    $tmpRGB[$ii][$jj]["Red"] /= $divedheight*$divedwidth;
-                    $tmpRGB[$ii][$jj]["Green"] /= $divedheight*$divedwidth;
-                    $tmpRGB[$ii][$jj]["Blue"] /= $divedheight*$divedwidth;
-                    $tmpRGB[$ii][$jj]["Alpha"] /= $divedheight*$divedwidth;
+                    $tmpRGB[$divy][$divx].setR($tmpRGB[$divy][$divx].getR()/$divedheight*$divedwidth);
+                    $tmpRGB[$divy][$divx].setG($tmpRGB[$divy][$divx].getG()/$divedheight*$divedwidth);
+                    $tmpRGB[$divy][$divx].setB($tmpRGB[$divy][$divx].getB()/$divedheight*$divedwidth);
+                    $tmpRGB[$divy][$divx].setA($tmpRGB[$divy][$divx].getA()/$divedheight*$divedwidth);
                 }
             }
-
-            echo $tmpRGB[0][0]."<br>";
+            echo "calc ok<br>";
+            var_dump($tmpRGB[0][0].getRGB());
 
             $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
         }
