@@ -46,7 +46,7 @@
 					echo "divedwidth=".$divedwidth."<br>";
 					echo "divedheight=".$divedheight."<br>";
 					
-					$files = $_FILES["upfile"]["tmp_name"];
+					//$files = $_FILES["upfile"]["tmp_name"];
 
 					for($divy = 0; $divy < $divheight; $divy++)
 					{
