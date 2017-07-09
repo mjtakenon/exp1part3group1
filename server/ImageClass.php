@@ -110,6 +110,7 @@ class ImageAnalizer
         else
         {
             saveImg();
+
             echo "path=".$save_path."<br>";
             echo "width=".$width."<br>";
             echo "height=".$height."<br>";
@@ -196,7 +197,7 @@ class ImageAnalizer
         }
     }
 
-    private function saveImg()
+    public function saveImg()
     {
         echo "a<br>";
         
