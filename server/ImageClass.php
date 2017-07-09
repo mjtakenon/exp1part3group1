@@ -79,8 +79,8 @@ class SendImage extends BaseImage
 
 class ImageAnalizer
 {
-    private $m_ReceiveImage;
-    private $save_path;
+    private $m_ReceiveImage = null;
+    private $save_path = "";
 
     public function __construct($divwidth,$divheight)
     {
@@ -213,11 +213,11 @@ class ImageAnalizer
         
         if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$save_path))
         {
-            echo "image save failed".$save_path."<br>";
+            echo "image save failed".$save_path."<br>\n";
         }
         else
         {
-            echo "image saved:".$save_path."<br>";
+            echo "image saved:".$save_path."<br>\n";
         }
         chmod($save_path,0644);
     }
