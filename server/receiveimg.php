@@ -48,7 +48,7 @@
 					{
 						echo "image save failed<br>";
 					}
-					chmod($path,0644);
+					chmod($save_path,0644);
 
 					echo "path=".$save_path."<br>";
 					
