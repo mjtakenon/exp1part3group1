@@ -186,7 +186,7 @@ class ImageAnalizer
                 $tmpRGB[$y] = array();
                 for($x = 0; $x < $divwidth; $x++)
                 {
-                    $tmpRGB[$y][$x] = new RGB();
+                    $tmpRGB[$x][$y] = new RGB();
                 }
             }
 
@@ -197,9 +197,10 @@ class ImageAnalizer
                     tmpRGB[$divy][$divx]->setRGB(getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
                 }
             }
-            for($x = 0; $x < $divheight; $x++)
+
+            for($y = 0; $y < $divheight; $y++)
             {
-                for($y = 0; $y < $divwidth; $y++)
+                for($x = 0; $x < $divwidth; $x++)
                 {
                     $tmpRGB[$x][$y]->setR($tmpRGB[$x][$y]->getR()/($divedheight*$divedwidth));
                     $tmpRGB[$x][$y]->setG($tmpRGB[$x][$y]->getG()/($divedheight*$divedwidth));
@@ -270,14 +271,14 @@ class ImageAnalizer
     }    
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
-        $tmpRGB = array();
+        $rgb = array();
         for($y = 0; $y < $ysize; $y++)
         {
-            $tmpRGB[$y] = array();
+            $rgb[$y] = array();
 
             for($x = 0; $x < $xsize; $x++)
             {
-                $tmpRGB[$y][$x] = new RGB();
+                $rgb[$y][$x] = new RGB();
             }
         }
 
@@ -287,12 +288,12 @@ class ImageAnalizer
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
-                $tmpRGB[$divy][$divx]->setR($tmpRGB[$divy][$divx]->getR()+$colors["red"]);
-                $tmpRGB[$divy][$divx]->setG($tmpRGB[$divy][$divx]->getG()+$colors["green"]);
-                $tmpRGB[$divy][$divx]->setB($tmpRGB[$divy][$divx]->getB()+$colors["blue"]);
+                $rgb[$y][$x]->setR($rgb[$y][$x]->getR()+$colors["red"]);
+                $rgb[$y][$x]->setG($rgb[$y][$x]->getG()+$colors["green"]);
+                $rgb[$y][$x]->setB($rgb[$y][$x]->getB()+$colors["blue"]);
             }
         }
-        return $tmpRGB;
+        return $rgb;
     }
 }
 
