@@ -30,8 +30,11 @@
 				}
 				else
 				{
-
+					echo "width=".$width."<br>";
+					echo "height=".$height."<br>";
+					echo "ext=".$ext."<br>";
 				}
+				
 			}
 			else 
 			{
