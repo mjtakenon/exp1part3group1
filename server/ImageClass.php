@@ -302,12 +302,18 @@ class ImageAnalizer
             {
                 echo "$x , $y \n";
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
+                echo "rgb\n";
                 $colors = imagecolorsforindex($image,$rgb);
+                echo "clors\n";
                 $sumrgb->setR($sumrgb->getR()+$colors["red"]);
+                echo "getR\n";
                 $sumrgb->setG($sumrgb->getG()+$colors["green"]);
+                echo "getG\n";
                 $sumrgb->setB($sumrgb->getB()+$colors["blue"]);
+                echo "getB";
             }
         }
+        echo "okkannsuu\n";
         return $sumrgb;
     }
 }
