@@ -144,10 +144,13 @@ class ImageAnalizer
                 default:
                     $ext = "other";
             }
-
             if(!$image)
             {
-                echo "image open failed";
+                echo "image open failed<br>";
+            }
+            else
+            {
+                echo "image created<br>";
             }
             
             $tmpRGB = array();
