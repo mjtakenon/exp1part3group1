@@ -79,7 +79,11 @@
 							$ext = "other";
 					}
 
-
+					$rgb = imagecolorat($image,0,0);
+					var_dump($rgb);
+					$colors = imagecolorsforindex($image,$rgb);
+					var_dump($colors);
+					
 					for($divy = 0; $divy < $divheight; $divy++)
 					{
 						for($divx = 0; $divx < $divwidth; $divx++)
@@ -88,9 +92,9 @@
 							{
 								for($x = 0; $x < $divedwidth; $divx++)
 								{
-									$rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
-									$colors = imagecolorsforindex($image,$rgb);
-									var_dump($colors);
+									//$rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
+									//$colors = imagecolorsforindex($image,$rgb);
+									//var_dump($colors);
 								}
 							}
 						}
