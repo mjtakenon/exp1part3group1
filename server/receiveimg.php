@@ -69,7 +69,7 @@
 					echo "divedheight=".$divedheight."<br>";
 					
 					$image = imagecreatefromjpeg($save_path);
-					/*
+					
 					switch($mime_type){
 						case IMAGETYPE_JPEG:
 							$image = imagecreatefromjpeg($save_path);
@@ -85,13 +85,13 @@
 							break;
 						default:
 							$ext = "other";
-					}*/
+					}
 
 					if(!$image)
 					{
 						echo "image open failed";
 					}
-					/*
+
 					for($divy = 0; $divy < $divheight; $divy++)
 					{
 						for($divx = 0; $divx < $divwidth; $divx++)
@@ -100,13 +100,13 @@
 							{
 								for($x = 0; $x < $divedwidth; $divx++)
 								{
-									//$rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
-									//$colors = imagecolorsforindex($image,$rgb);
-									//var_dump($colors);
+									$rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
+									$colors = imagecolorsforindex($image,$rgb);
+									var_dump($colors);
 								}
 							}
 						}
-					}*/
+					}
 				}
 			}
 			else 
@@ -114,25 +114,6 @@
 				echo "ファイルが選択されていません。";
 			}
 
-			function saveImage($img = null, $file = null, $ext = null) 
-			{
-				if (!$img || !$file || !$ext) return false;
-				switch ($ext) {
-					case "jpg" :
-						$result = imageJPEG($img, $file);
-						break;
-					case "gif" :
-						$result = imageGIF($img, $file);
-						break;
-					case "png" :
-						$result = imagePNG($img, $file);
-						break;
-					default : return false;
-					break;
-				}
-				$res = chmod($file, 0755);
-				return $result;
-			}
 		?>
 	</body>
 
