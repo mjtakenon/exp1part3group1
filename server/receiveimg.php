@@ -40,9 +40,27 @@
 					echo "divwidth=".$divwidth."<br>";
 					echo "divheight=".$divheight."<br>";
 
-					echo "divedwidth=".floor($width/$divwidth),"<br>";
-					echo "divedheight=".floor($width/$divheight),"<br>";
+					$divedwidth = floor($width/$divwidth);
+					$divedheight = floor($height/$divheight);
 					
+					echo "divedwidth=".$divedwidth."<br>";
+					echo "divedheight=".$divedheight."<br>";
+					
+					for($divy = 0; $divy < $divheight; $divy++)
+					{
+						for($divx = 0; $divx < $divwidth; $divx++)
+						{
+							for($y = 0; $y < $divedheight; $divy++)
+							{
+								for($x = 0; $x < $divedwidth; $divx++)
+								{
+									$rgb = imagecolorat($_FILES["upfile"]["tmp_name"],$x+$divx*$divedwidth,$y+$divy*$divedheight);
+									$colors = imagecolorsforindex($_FILES["upfile"]["tmp_name"],$rgb);
+									var_dump($colors);
+								}
+							}
+						}
+					}
 				}
 			}
 			else 
