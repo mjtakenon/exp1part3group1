@@ -46,7 +46,10 @@
 					echo "divedwidth=".$divedwidth."<br>";
 					echo "divedheight=".$divedheight."<br>";
 					
-					$files = $_FILES["upfile"]["tmp_name"];
+					$rgb = imagecolorat($_FILES["upfile"]["tmp_name"],0,0);
+					var_dump($rgb);
+					
+					//$files = $_FILES["upfile"]["tmp_name"];
 					/*
 					for($divy = 0; $divy < $divheight; $divy++)
 					{
