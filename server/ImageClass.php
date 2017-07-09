@@ -258,8 +258,10 @@ class ImageAnalizer
                 return"other";
         }
     }
+
     private function createImage($mime_type)
     {
+        echo $mime_type;
         switch($mime_type)
         {
             case IMAGETYPE_JPEG:
@@ -272,6 +274,7 @@ class ImageAnalizer
                 return imagecreatefrombmp($this->save_path);
         }
     }    
+
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
         $rgb = array();
