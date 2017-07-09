@@ -7,10 +7,13 @@
 	<body>
 		<h1>結果だっていってるだろぉぉぉぉぉん！？</h1>
 		<?php
+
+			var_dump(gd_info());
+
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"])){
 				list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
 
-				var_dump(gd_info());
+				
 				switch($mime_type){
 					case IMAGETYPE_JPEG:
 						$ext = "jpg";
