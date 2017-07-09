@@ -107,11 +107,11 @@ class ReciveImage extends BaseImage
     {
         return $this->division;
     }
-    public function setSize()
+    public function getSize()
     {
         return $this->size['width'];
     }
-    public function setExt()
+    public function getExt()
     {
         return $this->ext;
     }
