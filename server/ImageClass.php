@@ -49,10 +49,11 @@ class RGB
         $this->RGBColor['Blue'] = $B;
     }*/
     
-    public function setRGB($RGB){
-        $this->RGBColor['Red'] = $RGB->getR();
-        $this->RGBColor['Green'] = $RGB->getG();
-        $this->RGBColor['Blue'] = $RGB->getB();
+    public function setRGB($rgb){
+        var_dump($rgb);
+        $this->RGBColor['Red'] = $rgb->getR();
+        $this->RGBColor['Green'] = $rgb->getG();
+        $this->RGBColor['Blue'] = $rgb->getB();
     }
 
     public function setR($R){
