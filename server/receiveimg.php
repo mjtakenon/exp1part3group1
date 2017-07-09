@@ -5,7 +5,7 @@
 		<title>なんか上げとけ</title>
 	</head>
 	<body>
-		<h1>結果だっていってるだろぉぉぉぉぉん！？</h1>
+		<h2>結果だっていってるだろぉぉぉぉぉん！？</h2>
 		<?php
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"])){
 				if(move_uploaded_file($_FILES["upfile"]["tmp_name"],"files/".$_FILES["upfile"]["name"])){
@@ -13,7 +13,7 @@
 					echo $_FILES["upfile"]["name"]."をアップロードしました。";
 				}
 				else{
-					echo "ファイルをアップロードできません";
+					echo "ファイルをアップロードできませんでしたあああああああ！ざんねんでしたあああ！！";
 				}
 			}
 			else {
