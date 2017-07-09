@@ -207,7 +207,7 @@ class ImageAnalizer
                             $tmpRGB[$divy][$divx]->setR($tmpRGB[$divy][$divx]->getR()+$colors["red"]);
                             $tmpRGB[$divy][$divx]->setG($tmpRGB[$divy][$divx]->getG()+$colors["green"]);
                             $tmpRGB[$divy][$divx]->setB($tmpRGB[$divy][$divx]->getB()+$colors["blue"]);
-                            $tmpRGB[$divy][$divx]->setA($tmpRGB[$divy][$divx]->getA()+$colors["alpha"]);
+                            //$tmpRGB[$divy][$divx]->setA($tmpRGB[$divy][$divx]->getA()+$colors["alpha"]);
                             // $tmpRGB[$divy][$divx]["Red"] += $colors["red"];
                             // $tmpRGB[$divy][$divx]["Green"] += $colors["green"];
                             // $tmpRGB[$divy][$divx]["Blue"] += $colors["blue"];
@@ -225,7 +225,7 @@ class ImageAnalizer
                     $tmpRGB[$divy][$divx]->setR($tmpRGB[$divy][$divx]->getR()/$divedheight*$divedwidth);
                     $tmpRGB[$divy][$divx]->setG($tmpRGB[$divy][$divx]->getG()/$divedheight*$divedwidth);
                     $tmpRGB[$divy][$divx]->setB($tmpRGB[$divy][$divx]->getB()/$divedheight*$divedwidth);
-                    $tmpRGB[$divy][$divx]->setA($tmpRGB[$divy][$divx]->getA()/$divedheight*$divedwidth);
+                    //$tmpRGB[$divy][$divx]->setA($tmpRGB[$divy][$divx]->getA()/$divedheight*$divedwidth);
                 }
             }
             echo "calc ok<br>";
