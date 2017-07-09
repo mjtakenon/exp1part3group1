@@ -5,11 +5,11 @@
 		<title>さーばーんなちほーへよーこそー</title>
 	</head>
 	<body>
-		<h1>結果だっていってるだろぉぉぉぉぉん！？</h1>
+		<h2>結果だっていってるだろぉぉぉぉぉん！？</h2>
 		<?php
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"])){
 				list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
-				
+
 				switch($mime_type){
 					case IMAGETYPE_JPEG:
 						$ext = "jpg";
@@ -26,7 +26,6 @@
 					default:
 						$ext = "other";
 				}
-
 				if($ext === "other")
 				{
 					echo "画像ファイルを選択してください。";
@@ -37,7 +36,7 @@
 					$save_filename = date('YmdHis');
 					$save_basename = $save_filename. '.'. $ext;
 					$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
-					while (file_exists($save_path)) 
+					while (file_exists($save_path))
 					{
 						$save_filename .= mt_rand(0, 9);
 						$save_basename = $save_filename. '.'. $ext;
@@ -51,11 +50,11 @@
 					chmod($save_path,0644);
 
 					echo "path=".$save_path."<br>";
-					
+
 					echo "width=".$width."<br>";
 					echo "height=".$height."<br>";
 					echo "ext=".$ext."<br>";
-					
+
 					$divwidth = 2;
 					$divheight = 2;
 
@@ -64,10 +63,10 @@
 
 					$divedwidth = floor($width/$divwidth);
 					$divedheight = floor($height/$divheight);
-					
+
 					echo "divedwidth=".$divedwidth."<br>";
 					echo "divedheight=".$divedheight."<br>";
-					
+
 					$image = imagecreatefromjpeg($save_path);
 					
 					switch($mime_type){
@@ -110,11 +109,10 @@
 					}
 				}
 			}
-			else 
+			else
 			{
 				echo "ファイルが選択されていません。";
 			}
-
 		?>
 	</body>
 
