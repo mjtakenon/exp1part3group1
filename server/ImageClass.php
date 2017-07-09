@@ -211,6 +211,7 @@ class ImageAnalizer
             }
             echo "sum";
 
+
             for($y = 0; $y < $divheight; $y++)
             {
                 for($x = 0; $x < $divwidth; $x++)
