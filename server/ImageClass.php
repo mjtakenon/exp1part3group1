@@ -303,7 +303,7 @@ class ImageAnalizer
                 $sumrgb->setB($sumrgb->getB()+$colors["blue"]);
             }
         }
-        return $sumrgb->getRGB();
+        return $sumrgb;
     }
 }
 
