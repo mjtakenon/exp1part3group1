@@ -181,14 +181,12 @@ class ImageAnalizer
             }
             
             $tmpRGB = array();
-
-            for($x = 0; $x < $divheight; $x++)
+            for($y = 0; $y < $divheight; $y++)
             {
-                $tmpRGB[$x] = array();
-
-                for($y = 0; $y < $divwidth; $y++)
+                $tmpRGB[$y] = array();
+                for($x = 0; $x < $divwidth; $x++)
                 {
-                    $tmpRGB[$x][$y] = new RGB();
+                    $tmpRGB[$y][$x] = new RGB();
                 }
             }
 
@@ -196,17 +194,7 @@ class ImageAnalizer
             {
                 for($divx = 0; $divx < $divwidth; $divx++)
                 {
-                    for($y = 0; $y < $divedheight; $y++)
-                    {
-                        for($x = 0; $x < $divedwidth; $x++)
-                        {
-                            $rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
-                            $colors = imagecolorsforindex($image,$rgb);
-                            $tmpRGB[$divy][$divx]->setR($tmpRGB[$divy][$divx]->getR()+$colors["red"]);
-                            $tmpRGB[$divy][$divx]->setG($tmpRGB[$divy][$divx]->getG()+$colors["green"]);
-                            $tmpRGB[$divy][$divx]->setB($tmpRGB[$divy][$divx]->getB()+$colors["blue"]);
-                        }
-                    }
+                    tmpRGB[$divy][$divx]->setRGB(getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
                 }
             }
             for($x = 0; $x < $divheight; $x++)
@@ -280,6 +268,32 @@ class ImageAnalizer
                 return imagecreatefrombmp($this->save_path);
         }
     }    
+    private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
+    {
+        $tmpRGB = array();
+        for($y = 0; $y < $ysize; $y++)
+        {
+            $tmpRGB[$y] = array();
+
+            for($x = 0; $x < $xsize; $x++)
+            {
+                $tmpRGB[$y][$x] = new RGB();
+            }
+        }
+
+        for($y = 0; $y < $ysize; $y++)
+        {
+            for($x = 0; $x < $xsize; $x++)
+            {
+                $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
+                $colors = imagecolorsforindex($image,$rgb);
+                $tmpRGB[$divy][$divx]->setR($tmpRGB[$divy][$divx]->getR()+$colors["red"]);
+                $tmpRGB[$divy][$divx]->setG($tmpRGB[$divy][$divx]->getG()+$colors["green"]);
+                $tmpRGB[$divy][$divx]->setB($tmpRGB[$divy][$divx]->getB()+$colors["blue"]);
+            }
+        }
+        return $tmpRGB;
+    }
 }
 
 ?>
