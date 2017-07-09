@@ -208,6 +208,7 @@ class ImageAnalizer
                     $tmpRGB[$x][$y]->setR($rgb->getR());
                     $tmpRGB[$x][$y]->setG($rgb->getG());
                     $tmpRGB[$x][$y]->setB($rgb->getB());
+                    echo $x."<br>\n";
                 }
             }
             echo "sum\n";
