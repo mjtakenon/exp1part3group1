@@ -79,7 +79,7 @@ class SendImage extends BaseImage
 
 class ImageAnalizer
 {
-    private $this->m_ReceiveImage = null;
+    private $m_ReceiveImage = null;
     private $save_path = "";
 
     public function __construct($divwidth,$divheight)
