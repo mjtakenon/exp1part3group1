@@ -102,7 +102,8 @@
 								{
 									$rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
 									$colors = imagecolorsforindex($image,$rgb);
-									var_dump($colors);
+									var_dump($rgb);
+									echo "<br>";
 								}
 							}
 						}
