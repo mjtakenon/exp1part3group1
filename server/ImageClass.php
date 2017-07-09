@@ -295,6 +295,7 @@ class ImageAnalizer
         $sumrgb = new RGB();
         echo ($xpos).",";
         echo ($ypos)."<br>\n";
+        
         for($y = 0; $y < $ysize; $y++)
         {
             for($x = 0; $x < $xsize; $x++)
