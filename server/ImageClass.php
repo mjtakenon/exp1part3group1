@@ -221,15 +221,14 @@ class ImageAnalizer
             {
                 for($jj = 0; $jj < $divwidth; $jj++)
                 {
-                    echo $tmpRGB[$ii][$jj]->getR()/($divedheight*$divedwidth);
                     $tmpRGB[$ii][$jj]->setR($tmpRGB[$ii][$jj]->getR()/($divedheight*$divedwidth));
                     $tmpRGB[$ii][$jj]->setG($tmpRGB[$ii][$jj]->getG()/($divedheight*$divedwidth));
                     $tmpRGB[$ii][$jj]->setB($tmpRGB[$ii][$jj]->getB()/($divedheight*$divedwidth));
+                    var_dump($tmpRGB[$ii][$jj]->getRGB());
                     //$tmpRGB[$divy][$divx]->setA($tmpRGB[$divy][$divx]->getA()/$divedheight*$divedwidth);
                 }
             }
             echo "calc ok<br>";
-            var_dump($tmpRGB[0][0]->getRGB());
 
             $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
         }
