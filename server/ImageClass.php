@@ -197,11 +197,11 @@ class ImageAnalizer
                 }
             }
 
-            for($divy = 0; $divy < $divheight; $divy++)
+            for($y = 0; $y < $divheight; $y++)
             {
-                for($divx = 0; $divx < $divwidth; $divx++)
+                for($x = 0; $x < $divwidth; $x++)
                 {
-                    $tmpRGB[$divx][$divy]->setRGB($this->getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
+                    $tmpRGB[$x][$y]->setRGB($this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight));
                 }
             }
             echo "sum";
