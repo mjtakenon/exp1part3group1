@@ -43,11 +43,18 @@ class RGB
         return $this->RGBColor['Blue'];
     }
 
-    public function setRGB($R,$G,$B){
+    /*public function setRGB($R,$G,$B){
         $this->RGBColor['Red'] = $R;
         $this->RGBColor['Green'] = $G;
         $this->RGBColor['Blue'] = $B;
+    }*/
+    
+    public function setRGB($RGB){
+        $this->RGBColor['Red'] = $RGB->getR();
+        $this->RGBColor['Green'] = $RGB->getG();
+        $this->RGBColor['Blue'] = $RGB->getB();
     }
+
     public function setR($R){
         $this->RGBColor['Red'] = $R;
     }
@@ -194,7 +201,7 @@ class ImageAnalizer
             {
                 for($divx = 0; $divx < $divwidth; $divx++)
                 {
-                    $tmpRGB[$divy][$divx]->setRGB($this->getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
+                    $tmpRGB[$divx][$divy]->setRGB($this->getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
                 }
             }
             echo "sum";
@@ -275,16 +282,7 @@ class ImageAnalizer
 
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
-        $rgb = array();
-        for($y = 0; $y < $ysize; $y++)
-        {
-            $rgb[$y] = array();
-
-            for($x = 0; $x < $xsize; $x++)
-            {
-                $rgb[$y][$x] = new RGB();
-            }
-        }
+        $rgb = new RGB();
 
         for($y = 0; $y < $ysize; $y++)
         {
@@ -292,12 +290,12 @@ class ImageAnalizer
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
-                $rgb[$y][$x]->setR($rgb[$y][$x]->getR()+$colors["red"]);
-                $rgb[$y][$x]->setG($rgb[$y][$x]->getG()+$colors["green"]);
-                $rgb[$y][$x]->setB($rgb[$y][$x]->getB()+$colors["blue"]);
+                $rgb->setR($rgb->getR()+$colors["red"]);
+                $rgb->setG($rgb->getG()+$colors["green"]);
+                $rgb->setB($rgb->getB()+$colors["blue"]);
             }
         }
-        return $rgb;
+        return $rgb->getRGB();
     }
 }
 
