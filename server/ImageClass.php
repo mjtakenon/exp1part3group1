@@ -229,7 +229,7 @@ class ImageAnalizer
                 }
             }
             echo "calc ok<br>";
-            var_dump($tmpRGB[0][0].getRGB());
+            var_dump($tmpRGB[0][0]->getRGB());
 
             $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
         }
