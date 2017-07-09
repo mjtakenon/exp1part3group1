@@ -170,10 +170,10 @@ class ImageAnalizer
                         {
                             $rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
                             $colors = imagecolorsforindex($image,$rgb);
-                            $tmpRGB[$divy][$divx]['Red'] += $colors['red'];
-                            $tmpRGB[$divy][$divx]['Green'] += $colors['green'];
-                            $tmpRGB[$divy][$divx]['Blue'] += $colors['blue'];
-                            $tmpRGB[$divy][$divx]['Alpha'] += $colors['alpha'];
+                            $tmpRGB[$divy][$divx]["Red"] += $colors["red"];
+                            $tmpRGB[$divy][$divx]["Green"] += $colors["green"];
+                            $tmpRGB[$divy][$divx]["Blue"] += $colors["blue"];
+                            $tmpRGB[$divy][$divx]["Alpha"] += $colors["alpha"];
                         }
                     }
                 }
@@ -183,15 +183,14 @@ class ImageAnalizer
             {
                 for($jj = 0; $jj < $divwidth; $jj++)
                 {
-                    $tmpRGB[$ii][$jj]['Red'] /= $divedheight*$divedwidth;
-                    $tmpRGB[$ii][$jj]['Green'] /= $divedheight*$divedwidth;
-                    $tmpRGB[$ii][$jj]['Blue'] /= $divedheight*$divedwidth;
-                    $tmpRGB[$ii][$jj]['Alpha'] /= $divedheight*$divedwidth;
+                    $tmpRGB[$ii][$jj]["Red"] /= $divedheight*$divedwidth;
+                    $tmpRGB[$ii][$jj]["Green"] /= $divedheight*$divedwidth;
+                    $tmpRGB[$ii][$jj]["Blue"] /= $divedheight*$divedwidth;
+                    $tmpRGB[$ii][$jj]["Alpha"] /= $divedheight*$divedwidth;
                 }
             }
 
             echo $tmpRGB[0][0]."<br>";
-
 
             $m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
         }
