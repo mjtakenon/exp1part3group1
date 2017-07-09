@@ -84,7 +84,6 @@ class ImageAnalizer
 
     public function __construct($divwidth,$divheight)
     {
-        echo "construct<br>";
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
         switch($mime_type)
         {
@@ -104,6 +103,8 @@ class ImageAnalizer
                 $ext = "other";
         }
 
+        echo "construct<br>";
+        
         if($ext === "other")
         {
             echo "画像ファイルを選択してください。";
