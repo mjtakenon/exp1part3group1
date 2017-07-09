@@ -47,7 +47,7 @@
 					echo "divedheight=".$divedheight."<br>";
 
 					//ファイル保存
-					$save_dir = './images/';
+					$save_dir = '.\\images\\';
 					$save_filename = date('YmdHis');
 					$save_basename = $save_filename. '.'. $ext;
 					$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
