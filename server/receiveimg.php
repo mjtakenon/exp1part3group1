@@ -8,14 +8,17 @@
 		<h1>結果だっていってるだろぉぉぉぉぉん！？</h1>
 		<?php
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"])){
-				echo "filetype = ".$_FILES["upfile"]["type"];
-				if(move_uploaded_file($_FILES["upfile"]["tmp_name"],"files/".$_FILES["upfile"]["name"])){
+				//echo "filetype = ".$_FILES["upfile"]["type"];
+				var $image = $_FILES["upfile"];
+				echo $image["type"];
+				//if($image["type"])
+				/*if(move_uploaded_file($_FILES["upfile"]["tmp_name"],"files/".$_FILES["upfile"]["name"])){
 					chmod("files/".$_FILES["upfile"]["name"],0777);
 					echo $_FILES["upfile"]["name"]."をアップロードしました。";
 				}
 				else{
 					echo "ファイルをアップロードできません";
-				}
+				}*/
 			}
 			else {
 				echo "ファイルが選択されていません。";
