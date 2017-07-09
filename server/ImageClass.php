@@ -197,8 +197,6 @@ class ImageAnalizer
                 }
             }
 
-            var_dump($image);
-
             for($divy = 0; $divy < $divheight; $divy++)
             {
                 for($divx = 0; $divx < $divwidth; $divx++)
@@ -285,19 +283,19 @@ class ImageAnalizer
 
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
-        $rgb = new RGB();
+        $sumrgb = new RGB();
         for($y = 0; $y < $ysize; $y++)
         {
             for($x = 0; $x < $xsize; $x++)
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
-                $rgb->setR($rgb->getR()+$colors["red"]);
-                $rgb->setG($rgb->getG()+$colors["green"]);
-                $rgb->setB($rgb->getB()+$colors["blue"]);
+                $sumrgb->setR($sumrgb->getR()+$colors["red"]);
+                $sumrgb->setG($sumrgb->getG()+$colors["green"]);
+                $sumrgb->setB($sumrgb->getB()+$colors["blue"]);
             }
         }
-        return $rgb->getRGB();
+        return $sumrgb->getRGB();
     }
 }
 
