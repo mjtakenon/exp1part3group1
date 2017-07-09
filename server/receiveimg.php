@@ -33,12 +33,11 @@
 				}
 				else
 				{
-					//ファイル保存
 					$save_dir = '\\images\\';
 					$save_filename = date('YmdHis');
 					$save_basename = $save_filename. '.'. $ext;
 					$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
-					while (file_exists($save_path)) { // 同名ファイルがあればファイル名を変更する
+					while (file_exists($save_path)) {
 						$save_filename .= mt_rand(0, 9);
 						$save_basename = $save_filename. '.'. $ext;
 						$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
@@ -80,7 +79,10 @@
 						default:
 							$ext = "other";
 					}
-					var_dump($image);
+					if(!$image)
+					{
+						echo "image open failed";
+					}
 					/*
 					for($divy = 0; $divy < $divheight; $divy++)
 					{
