@@ -71,8 +71,8 @@ class RGB
 class ReciveImage extends BaseImage
 {
     private $division = array('X' => 0,'Y' => 0);
-    private $size = array('width' => 0, 'height' => 0);
-    private $ext = "";
+    //private $size = array('width' => 0, 'height' => 0);
+    //private $ext = "";
     private $pixColor = null;
 
     function __construct($w,$h,$e,$dimg){
