@@ -77,16 +77,17 @@ class ReciveImage extends BaseImage
 
     function __construct($w,$h,$e,$dimg){
         parent::__construct($w,$h,$e);
-        echo "construct";
+        echo "construct\n";
+        echo count($dimg[0]).",".count($dimg);
         $this->setDivision(count($dimg[0]),count($dimg));
-        echo "division";
+        echo "\ndivision\n";
         //$this->setSize($w,$h);
         //$this->setExt($e);
 
         //for ($i=0; $i < $dy; $i++) {
             
             $this->pixColor = $dimg;
-            echo "set rgb";
+            echo "set rgb\n";
             //$this->pixColor[$i] = array_fill(0,$dx,new RGB());
         //}
     }
@@ -307,18 +308,18 @@ class ImageAnalizer
             {
                 //echo "$x , $y \n";
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
-                echo "rgb\n";
+                //echo "rgb\n";
                 $colors = imagecolorsforindex($image,$rgb);
-                echo "clors\n";
+                //echo "clors\n";
                 $sumrgb->setR($sumrgb->getR()+$colors["red"]);
-                echo "getR\n";
+                //echo "getR\n";
                 $sumrgb->setG($sumrgb->getG()+$colors["green"]);
-                echo "getG\n";
+                //echo "getG\n";
                 $sumrgb->setB($sumrgb->getB()+$colors["blue"]);
-                echo "getB";
+                //echo "getB";
             }
         }
-        echo "okkannsuu\n";
+        //echo "okkannsuu\n";
         return $sumrgb;
     }
 }
