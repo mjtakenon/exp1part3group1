@@ -40,7 +40,6 @@ class RGB
     }
 }
 
-
 //アップロード
 class ReciveImage extends BaseImage
 {
@@ -78,7 +77,145 @@ class SendImage extends BaseImage
     }
 }
 
-$rim = new ReciveImage(100,200,"png",3,3);
-echo 'new ReciveImage(100,200,"png",3,3);';
-var_dump($rim);
+class ImageAnalizer
+{
+    private $m_ReceiveImage;
+    private $save_path;
+
+    public function __construct($divwidth,$divheight)
+    {
+        list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
+        switch($mime_type)
+        {
+            case IMAGETYPE_JPEG:
+                $ext = "jpg";
+                break;
+            case IMAGETYPE_PNG:
+                $ext = "png";
+                break;
+            case IMAGETYPE_GIF:
+                $ext = "gif";
+                break;
+            case IMAGETYPE_BMP:
+                $ext = "bmp";
+                break;
+            default:
+                $ext = "other";
+        }
+
+        if($ext === "other")
+        {
+            echo "画像ファイルを選択してください。";
+        }
+        else
+        {
+            saveImg();
+            echo "path=".$save_path."<br>";
+            echo "width=".$width."<br>";
+            echo "height=".$height."<br>";
+            echo "ext=".$ext."<br>";
+
+            echo "divwidth=".$divwidth."<br>";
+            echo "divheight=".$divheight."<br>";
+
+            $divedwidth = floor($width/$divwidth);
+            $divedheight = floor($height/$divheight);
+
+            echo "divedwidth=".$divedwidth."<br>";
+            echo "divedheight=".$divedheight."<br>";
+
+            $image = imagecreatefromjpeg($save_path);
+            
+            switch($mime_type){
+                case IMAGETYPE_JPEG:
+                    $image = imagecreatefromjpeg($save_path);
+                    break;
+                case IMAGETYPE_PNG:
+                    $image = imagecreatefrompng($save_path);
+                    break;
+                case IMAGETYPE_GIF:
+                    $image = imagecreatefromgif($save_path);
+                    break;
+                case IMAGETYPE_BMP:
+                    $image = imagecreatefrombmp($save_path);
+                    break;
+                default:
+                    $ext = "other";
+            }
+
+            if(!$image)
+            {
+                echo "image open failed";
+            }
+            
+            $tmpRGB = new array();
+
+            for($ii = 0; $ii < $divheight; $ii++)
+            {
+                $tmpRGB[$ii] = new array();
+
+                for($jj = 0; $jj < $divwidth; $jj++)
+                {
+                    $tmpRGB[$ii][$jj] = new RGB();
+                }
+            }
+
+            for($divy = 0; $divy < $divheight; $divy++)
+            {
+                for($divx = 0; $divx < $divwidth; $divx++)
+                {
+                    for($y = 0; $y < $divedheight; $y++)
+                    {
+                        for($x = 0; $x < $divedwidth; $x++)
+                        {
+                            $rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
+                            $colors = imagecolorsforindex($image,$rgb);
+                            $tmpRGB[$divy][$divx]['Red'] += $colors['red'];
+                            $tmpRGB[$divy][$divx]['Green'] += $colors['green'];
+                            $tmpRGB[$divy][$divx]['Blue'] += $colors['blue'];
+                            $tmpRGB[$divy][$divx]['Alpha'] += $colors['alpha'];
+                        }
+                    }
+                }
+            }
+
+            for($ii = 0; $ii < $divheight; $ii++)
+            {
+                for($jj = 0; $jj < $divwidth; $jj++)
+                {
+                    $tmpRGB[$ii][$jj]['Red'] /= $divedheight*$divedwidth;
+                    $tmpRGB[$ii][$jj]['Green'] /= $divedheight*$divedwidth;
+                    $tmpRGB[$ii][$jj]['Blue'] /= $divedheight*$divedwidth;
+                    $tmpRGB[$ii][$jj]['Alpha'] /= $divedheight*$divedwidth;
+                }
+            }
+
+            echo $tmpRGB[0][0]."<br>";
+
+
+        $m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
+
+
+    }
+    private function saveImg()
+    {
+        $save_dir = '\\images\\';
+        $save_filename = date('YmdHis');
+        $save_basename = $save_filename. '.'. $ext;
+        $save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
+        while (file_exists($save_path))
+        {
+            $save_filename .= mt_rand(0, 9);
+            $save_basename = $save_filename. '.'. $ext;
+            $save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
+        }
+        //if(!saveImage($_FILES["upfile"]["tmp_name"],$save_path,$ext))
+        if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$save_path))
+        {
+            echo "image save failed<br>";
+        }
+        chmod($save_path,0644);
+    }
+}
+
 ?>
