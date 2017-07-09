@@ -116,7 +116,6 @@
 				if (!$img || !$file || !$ext) return false;
 				switch ($ext) {
 					case "jpg" :
-					echo "jpg";
 						$result = imageJPEG($img, $file);
 						break;
 					case "gif" :
@@ -127,7 +126,7 @@
 						break;
 					default : return false; break;
 				}
-				chmod($file, 0644); // パーミッション変更
+				chmod($file, 0777); // パーミッション変更
 				return $result;
 			}
 		?>
