@@ -197,6 +197,8 @@ class ImageAnalizer
                 }
             }
 
+            var_dump($image);
+
             for($divy = 0; $divy < $divheight; $divy++)
             {
                 for($divx = 0; $divx < $divwidth; $divx++)
@@ -284,7 +286,6 @@ class ImageAnalizer
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
         $rgb = new RGB();
-        var_dump($image);
         for($y = 0; $y < $ysize; $y++)
         {
             for($x = 0; $x < $xsize; $x++)
