@@ -126,7 +126,7 @@
 						break;
 					default : return false; break;
 				}
-				chmod($file, 0777); // パーミッション変更
+				echo chmod($file, 0777); // パーミッション変更
 				return $result;
 			}
 		?>
