@@ -219,7 +219,7 @@ class ImageAnalizer
                     $tmpRGB[$ii][$jj]->setR($tmpRGB[$ii][$jj]->getR()/($divedheight*$divedwidth));
                     $tmpRGB[$ii][$jj]->setG($tmpRGB[$ii][$jj]->getG()/($divedheight*$divedwidth));
                     $tmpRGB[$ii][$jj]->setB($tmpRGB[$ii][$jj]->getB()/($divedheight*$divedwidth));
-                    var_dump($tmpRGB[$ii][$jj]->getR());
+                    var_dump($tmpRGB[$ii][$jj]->getRGB());
                 }
             }
             echo "calc ok<br>";
