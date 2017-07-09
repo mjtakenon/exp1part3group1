@@ -42,7 +42,10 @@
 						$save_basename = $save_filename. '.'. $ext;
 						$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
 					}
-
+					if(!saveImage($_FILES["upfile"]["tmp_name"],$save_path,$ext))
+					{
+						echo "image save failed<br>";
+					}
 					echo "path=".$save_path."<br>";
 					
 					echo "width=".$width."<br>";
@@ -61,8 +64,8 @@
 					echo "divedwidth=".$divedwidth."<br>";
 					echo "divedheight=".$divedheight."<br>";
 					
-					$image;
-					
+					$image = imagecreatefromjpeg($save_path);
+					/*
 					switch($mime_type){
 						case IMAGETYPE_JPEG:
 							$image = imagecreatefromjpeg($save_path);
@@ -78,7 +81,8 @@
 							break;
 						default:
 							$ext = "other";
-					}
+					}*/
+
 					if(!$image)
 					{
 						echo "image open failed";
@@ -105,7 +109,25 @@
 			{
 				echo "ファイルが選択されていません。";
 			}
-			
+
+			function saveImage($img = null, $file = null, $ext = null) 
+			{
+				if (!$img || !$file || !$ext) return false;
+				switch ($ext) {
+					case "jpg" :
+						$result = imageJPEG($img, $file);
+						break;
+					case "gif" :
+						$result = imageGIF($img, $file);
+						break;
+					case "png" :
+						$result = imagePNG($img, $file);
+						break;
+					default : return false; break;
+				}
+				chmod($file, 0644); // パーミッション変更
+				return $result;
+			}
 		?>
 	</body>
 
