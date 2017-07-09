@@ -222,9 +222,9 @@ class ImageAnalizer
             {
                 for($jj = 0; $jj < $divwidth; $jj++)
                 {
-                    $tmpRGB[$divy][$divx]->setR($tmpRGB[$divy][$divx]->getR()/($divedheight*$divedwidth));
-                    $tmpRGB[$divy][$divx]->setG($tmpRGB[$divy][$divx]->getG()/($divedheight*$divedwidth));
-                    $tmpRGB[$divy][$divx]->setB($tmpRGB[$divy][$divx]->getB()/($divedheight*$divedwidth));
+                    $tmpRGB[$ii][$jj]->setR($tmpRGB[$ii][$jj]->getR()/($divedheight*$divedwidth));
+                    $tmpRGB[$ii][$jj]->setG($tmpRGB[$ii][$jj]->getG()/($divedheight*$divedwidth));
+                    $tmpRGB[$ii][$jj]->setB($tmpRGB[$ii][$jj]->getB()/($divedheight*$divedwidth));
                     //$tmpRGB[$divy][$divx]->setA($tmpRGB[$divy][$divx]->getA()/$divedheight*$divedwidth);
                 }
             }
