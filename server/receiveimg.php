@@ -80,11 +80,7 @@
 						default:
 							$ext = "other";
 					}
-
-					$rgb = imagecolorat($image,0,0);
-					var_dump($rgb);
-					$colors = imagecolorsforindex($image,$rgb);
-					var_dump($colors);
+					var_dump($image);
 					/*
 					for($divy = 0; $divy < $divheight; $divy++)
 					{
