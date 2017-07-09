@@ -46,6 +46,7 @@
 					{
 						echo "image save failed<br>";
 					}
+
 					echo "path=".$save_path."<br>";
 					
 					echo "width=".$width."<br>";
@@ -115,6 +116,7 @@
 				if (!$img || !$file || !$ext) return false;
 				switch ($ext) {
 					case "jpg" :
+					echo "jpg";
 						$result = imageJPEG($img, $file);
 						break;
 					case "gif" :
