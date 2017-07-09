@@ -295,10 +295,10 @@ class ImageAnalizer
         $sumrgb = new RGB();
         echo ($xpos).",";
         echo ($ypos)."<br>\n";
-        
-        for($y = 0; $y < $ysize; $y++)
+
+        for($y = 0; $y < $ysize-1; $y++)
         {
-            for($x = 0; $x < $xsize; $x++)
+            for($x = 0; $x < $xsize-1; $x++)
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
