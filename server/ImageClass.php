@@ -79,7 +79,7 @@ class SendImage extends BaseImage
 
 class ImageAnalizer
 {
-    private $m_ReceiveImage = null;
+    private $this->m_ReceiveImage = null;
     private $save_path = "";
 
     public function __construct($divwidth,$divheight)
@@ -111,7 +111,7 @@ class ImageAnalizer
         {
             $this->saveImg($ext);
 
-            echo "path=".$save_path."<br>";
+            echo "path=".$this->save_path."<br>";
             echo "width=".$width."<br>";
             echo "height=".$height."<br>";
             echo "ext=".$ext."<br>";
@@ -125,20 +125,20 @@ class ImageAnalizer
             echo "divedwidth=".$divedwidth."<br>";
             echo "divedheight=".$divedheight."<br>";
 
-            $image = imagecreatefromjpeg($save_path);
+            $image = imagecreatefromjpeg($this->save_path);
             
             switch($mime_type){
                 case IMAGETYPE_JPEG:
-                    $image = imagecreatefromjpeg($save_path);
+                    $image = imagecreatefromjpeg($this->save_path);
                     break;
                 case IMAGETYPE_PNG:
-                    $image = imagecreatefrompng($save_path);
+                    $image = imagecreatefrompng($this->save_path);
                     break;
                 case IMAGETYPE_GIF:
-                    $image = imagecreatefromgif($save_path);
+                    $image = imagecreatefromgif($this->save_path);
                     break;
                 case IMAGETYPE_BMP:
-                    $image = imagecreatefrombmp($save_path);
+                    $image = imagecreatefrombmp($this->save_path);
                     break;
                 default:
                     $ext = "other";
@@ -193,7 +193,7 @@ class ImageAnalizer
 
             echo $tmpRGB[0][0]."<br>";
 
-            $m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
+            $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
         }
     }
 
@@ -202,24 +202,24 @@ class ImageAnalizer
         $save_dir = '\\images\\';
         $save_filename = date('YmdHis');
         $save_basename = $save_filename. '.'. $ext;
-        $save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
+        $this->save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
 
-        while (file_exists($save_path))
+        while (file_exists($this->save_path))
         {
             $save_filename .= mt_rand(0, 9);
             $save_basename = $save_filename. '.'. $ext;
-            $save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
+            $this->save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
         }
         
-        if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$save_path))
+        if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$this->save_path))
         {
-            echo "image save failed".$save_path."<br>\n";
+            echo "image save failed".$this->save_path."<br>\n";
         }
         else
         {
-            echo "image saved:".$save_path."<br>\n";
+            echo "image saved:".$this->save_path."<br>\n";
         }
-        chmod($save_path,0644);
+        chmod($this->save_path,0644);
     }
 }
 
