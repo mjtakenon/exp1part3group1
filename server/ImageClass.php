@@ -197,6 +197,8 @@ class ImageAnalizer
                 }
             }
 
+            echo "array crated<br>";
+
             for($y = 0; $y < $divheight; $y++)
             {
                 for($x = 0; $x < $divwidth; $x++)
