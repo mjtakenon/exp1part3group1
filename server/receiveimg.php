@@ -85,7 +85,7 @@
 					var_dump($rgb);
 					$colors = imagecolorsforindex($image,$rgb);
 					var_dump($colors);
-					
+					/*
 					for($divy = 0; $divy < $divheight; $divy++)
 					{
 						for($divx = 0; $divx < $divwidth; $divx++)
@@ -100,7 +100,7 @@
 								}
 							}
 						}
-					}
+					}*/
 				}
 			}
 			else 
