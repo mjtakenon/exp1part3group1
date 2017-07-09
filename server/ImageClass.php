@@ -194,7 +194,7 @@ class ImageAnalizer
             {
                 for($divx = 0; $divx < $divwidth; $divx++)
                 {
-                    tmpRGB[$divy][$divx]->setRGB($this->getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
+                    $tmpRGB[$divy][$divx]->setRGB($this->getSumRGB($image,$divx*$divedwidth,$divy*$divedheight,$divedwidth,$divedheight));
                 }
             }
             echo "sum";
