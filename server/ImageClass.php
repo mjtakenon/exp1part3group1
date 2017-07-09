@@ -145,7 +145,7 @@ class ImageAnalizer
     {
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
         
-        $ext = $this->isImageFile();
+        $ext = $this->isImageFile($mime_type);
 
         if($ext === "other")
         {
@@ -210,6 +210,7 @@ class ImageAnalizer
                 }
             }
             echo "div";
+
             $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$tmpRGB);
 
             echo "calc ok<br>";
