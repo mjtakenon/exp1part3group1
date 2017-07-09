@@ -217,11 +217,11 @@ class ImageAnalizer
                 }
             }
             echo "calc ok<br>";
-
             for($ii = 0; $ii < $divheight; $ii++)
             {
                 for($jj = 0; $jj < $divwidth; $jj++)
                 {
+                    echo $tmpRGB[$ii][$jj]->getR()/($divedheight*$divedwidth);
                     $tmpRGB[$ii][$jj]->setR($tmpRGB[$ii][$jj]->getR()/($divedheight*$divedwidth));
                     $tmpRGB[$ii][$jj]->setG($tmpRGB[$ii][$jj]->getG()/($divedheight*$divedwidth));
                     $tmpRGB[$ii][$jj]->setB($tmpRGB[$ii][$jj]->getB()/($divedheight*$divedwidth));
