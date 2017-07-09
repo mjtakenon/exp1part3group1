@@ -109,7 +109,7 @@ class ImageAnalizer
         }
         else
         {
-            $this->saveImg();
+            $this->saveImg($ext);
 
             echo "path=".$save_path."<br>";
             echo "width=".$width."<br>";
@@ -197,7 +197,7 @@ class ImageAnalizer
         }
     }
 
-    private function saveImg()
+    private function saveImg($ext)
     {
         $save_dir = '\\images\\';
         $save_filename = date('YmdHis');
