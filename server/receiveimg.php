@@ -37,7 +37,8 @@
 					$save_filename = date('YmdHis');
 					$save_basename = $save_filename. '.'. $ext;
 					$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
-					while (file_exists($save_path)) {
+					while (file_exists($save_path)) 
+					{
 						$save_filename .= mt_rand(0, 9);
 						$save_basename = $save_filename. '.'. $ext;
 						$save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
@@ -126,8 +127,7 @@
 						break;
 					default : return false; break;
 				}
-				$res = chmod($file, 0777); // パーミッション変更
-				echo "chmod";
+				$res = chmod($file, 0755);
 				return $result;
 			}
 		?>
