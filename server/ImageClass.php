@@ -76,19 +76,15 @@ class ReciveImage extends BaseImage
     private $pixColor = null;
 
     function __construct($w,$h,$e,$dimg){
-        echo "parent\n";
         parent::__construct($w,$h,$e);
-        echo "construct\n";
         echo count($dimg[0]).",".count($dimg);
         $this->setDivision(count($dimg[0]),count($dimg));
-        echo "\ndivision\n";
         //$this->setSize($w,$h);
         //$this->setExt($e);
 
         //for ($i=0; $i < $dy; $i++) {
             
             $this->pixColor = $dimg;
-            echo "set rgb\n";
             //$this->pixColor[$i] = array_fill(0,$dx,new RGB());
         //}
     }
@@ -239,6 +235,9 @@ class ImageAnalizer
             $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$tmpRGB);
 
             echo "calc ok<br>\n";
+            echo "<pre>";
+            print_r($this->m_ReceiveImage);
+            echo "</pre>";
         }
     }
 
