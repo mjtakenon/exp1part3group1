@@ -169,7 +169,7 @@ class ImageAnalizer
             echo "divedwidth=".$divedwidth."<br>";
             echo "divedheight=".$divedheight."<br>";
 
-            $image = createImage($mime_type);
+            $image = $this->createImage($mime_type);
 
             if(!$image)
             {
