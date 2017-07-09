@@ -205,12 +205,12 @@ class ImageAnalizer
                 {
                     echo $x.",";
                     $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight);
+                    echo $rgb->getR();
                     $tmpRGB[$x][$y]->setR($rgb->getR());
-                    echo "r";
+                    echo $rgb->getG();
                     $tmpRGB[$x][$y]->setG($rgb->getG());
-                    echo "g";
+                    echo $rgb->getB();
                     $tmpRGB[$x][$y]->setB($rgb->getB());
-                    echo "b";
                 }
             }
             echo "sum";
