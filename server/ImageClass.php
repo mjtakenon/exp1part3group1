@@ -204,6 +204,7 @@ class ImageAnalizer
                         {
                             $rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
                             $colors = imagecolorsforindex($image,$rgb);
+                            echo $tmpRGB[$divy][$divx].getR()+$colors["red"];
                             $tmpRGB[$divy][$divx].setR($tmpRGB[$divy][$divx].getR()+$colors["red"]);
                             $tmpRGB[$divy][$divx].setG($tmpRGB[$divy][$divx].getG()+$colors["green"]);
                             $tmpRGB[$divy][$divx].setB($tmpRGB[$divy][$divx].getB()+$colors["blue"]);
