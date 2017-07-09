@@ -7,7 +7,7 @@
 	<body>
 		<h2>結果だっていってるだろぉぉぉぉぉん！？</h2>
 		<?php
-			require('.\\ImageClass.php');
+			require('ImageClass.php');
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"]))
 			{
 				$analizer = new ImageAnalizer(2,2);

@@ -148,11 +148,11 @@ class ImageAnalizer
                 echo "image open failed";
             }
             
-            $tmpRGB = new array();
+            $tmpRGB = array();
 
             for($ii = 0; $ii < $divheight; $ii++)
             {
-                $tmpRGB[$ii] = new array();
+                $tmpRGB[$ii] = array();
 
                 for($jj = 0; $jj < $divwidth; $jj++)
                 {
@@ -193,10 +193,10 @@ class ImageAnalizer
             echo $tmpRGB[0][0]."<br>";
 
 
-        $m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
-
-
+            $m_ReceiveImage = new ReceiveImage($width,$height,$ext,$divwidth,$divheight);
+        }
     }
+
     private function saveImg()
     {
         $save_dir = '\\images\\';
