@@ -214,6 +214,10 @@ class ImageAnalizer
         {
             echo "image save failed<br>";
         }
+        else
+        {
+            echo "image saved<br>";
+        }
         chmod($save_path,0644);
     }
 }
