@@ -98,7 +98,7 @@
 						{
 							for($y = 0; $y < $divedheight; $y++)
 							{
-								for($x = 0; $x < $divedwidth; $y++)
+								for($x = 0; $x < $divedwidth; $x++)
 								{
 									$rgb = imagecolorat($image,$x+$divx*$divedwidth,$y+$divy*$divedheight);
 									$colors = imagecolorsforindex($image,$rgb);
