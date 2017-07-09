@@ -290,10 +290,10 @@ class ImageAnalizer
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
+                var_dump($colors);
                 $rgb->setR($rgb->getR()+$colors["red"]);
                 $rgb->setG($rgb->getG()+$colors["green"]);
                 $rgb->setB($rgb->getB()+$colors["blue"]);
-                var_dump($rgb);
             }
         }
         return $rgb->getRGB();
