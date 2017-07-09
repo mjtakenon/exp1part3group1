@@ -11,27 +11,31 @@
 				list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
 
 				switch($mime_type){
-					//jpegの場合
 					case IMAGETYPE_JPEG:
-						//拡張子の設定
 						$ext = "jpg";
 						break;
-					//pngの場合
 					case IMAGETYPE_PNG:
-					//拡張子の設定
 						$ext = "png";
 						break;
-					//gifの場合
 					case IMAGETYPE_GIF:
-						//拡張子の設定
 						$ext = "gif";
 						break;
+					case IMAGETYPE_BMP:
+						$ext = "bmp";
+						break;
+					default:
+						$ext = "other"
+						break;
 				}
-				//拡張子の出力
+				var_dump(gd_info());
+				if($ext == "other")
+				{
+					echo "画像ファイルを選択してください。"
+				}
+				else
+				{
 
-				echo "x=".$width."y=".$height."attr=".$attr."<br>";
-				echo "ext=".$ext."<br>";
-
+				}
 			}
 			else {
 				echo "ファイルが選択されていません。";
