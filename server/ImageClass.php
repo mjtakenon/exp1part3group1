@@ -22,6 +22,15 @@ class BaseImage
         return $this->ext;
     }
 
+    public function setWidth($w){
+        $this->width = $w;
+    }
+    public function setHeight($h){
+        $this->height = $h;
+    }
+    public function setExt($e){
+        $this->ext = $e;
+    }
 }
 
 /*RGBのためのクラス*/
@@ -43,7 +52,7 @@ class RGB
         return $this->RGBColor['Blue'];
     }
 
-    /*public function setRGB($R,$G,$B){
+    public function setRGB($R,$G,$B){
         $this->RGBColor['Red'] = $R;
         $this->RGBColor['Green'] = $G;
         $this->RGBColor['Blue'] = $B;
@@ -71,16 +80,12 @@ class RGB
 class ReciveImage extends BaseImage
 {
     private $division = array('X' => 0,'Y' => 0);
-    //private $size = array('width' => 0, 'height' => 0);
-    //private $ext = "";
     private $pixColor = null;
 
     function __construct($w,$h,$e,$dimg){
         parent::__construct($w,$h,$e);
-        echo count($dimg[0]).",".count($dimg);
+        //echo count($dimg[0]).",".count($dimg);
         $this->setDivision(count($dimg[0]),count($dimg));
-        //$this->setSize($w,$h);
-        //$this->setExt($e);
 
         //for ($i=0; $i < $dy; $i++) {
 
@@ -93,11 +98,6 @@ class ReciveImage extends BaseImage
     {
         $this->division['X'] = $x;
         $this->division['Y'] = $y;
-    }
-    public function setSize($w,$h)
-    {
-        $this->size['width'] = $w;
-        $this->size['height'] = $h;
     }
     public function setExt($e)
     {
@@ -112,14 +112,6 @@ class ReciveImage extends BaseImage
     public function getDivision()
     {
         return $this->division;
-    }
-    public function getSize()
-    {
-        return $this->size['width'];
-    }
-    public function getExt()
-    {
-        return $this->ext;
     }
     public function getPixcolor()
     {
@@ -144,6 +136,27 @@ class SendImage extends BaseImage
     }
 }
 
+class FlickerImage extends BaseImage
+{
+    private $url;
+
+    function __construct($w,$h,$e,$u)
+    {
+        parent::__construct($w,$h,$e);
+        $this->url = $u;
+    }
+
+    function getUrl()
+    {
+        return $this->url;
+    }
+
+    function setUrl($u)
+    {
+        $this->url = $u;
+    }
+}
+
 class ImageAnalizer
 {
     private $m_ReceiveImage = null;
@@ -157,12 +170,21 @@ class ImageAnalizer
 
         if($ext === "other")
         {
-            //画像処理
-            //flickerから取ってきたりする
+            echo "画像の初期化に失敗しました。<br>\n";
         }
         else
         {
-            //エラー処理
+            $num = 10;
+
+            for($page=1;$page<=10;$page++)
+            {
+                $flickerimages = $this->getFlickerImages($num,$page);
+
+                foreach($flickerimages as $flickerimage)
+                {
+                    echo $flickerimage->getUrl()."<br>\n";
+                }
+            }
         }
 
     }
@@ -175,7 +197,7 @@ class ImageAnalizer
 
         if($ext === "other")
         {
-            echo "画像ファイルを選択してください。<br>";
+            echo "画像ファイルを選択してください。<br>\n";
             return false;
         }
 
@@ -185,10 +207,10 @@ class ImageAnalizer
             return false;
         }
 
-        echo "path=".$this->save_path."<br>";
-        echo "width=".$width."<br>";
-        echo "height=".$height."<br>";
-        echo "ext=".$ext."<br>";
+        echo "path=".$this->save_path."<br>\n";
+        echo "width=".$width."<br>\n";
+        echo "height=".$height."<br>\n";
+        echo "ext=".$ext."<br>\n";
 
 
         if(!$image)
@@ -210,14 +232,16 @@ class ImageAnalizer
             }
         }
 
-        echo "divedwidth=".floor($width/$divwidth)."<br>";
-        echo "divedheight=".floor($height/$divheight)."<br>";
+        echo "divwidth=".$divwidth."<br>\n";
+        echo "divheight=".$divheight."<br>\n";
+        echo "divedwidth=".floor($width/$divwidth)."<br>\n";
+        echo "divedheight=".floor($height/$divheight)."<br>\n";
 
         $image = $this->createImage($mime_type);
 
         if(!$image)
         {
-            echo "保存した画像を開けませんでした。<br>";
+            echo "保存した画像を開けませんでした。<br>\n";
             return false;
         }
 
@@ -225,8 +249,11 @@ class ImageAnalizer
 
         $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
 
-        print_r($this->m_ReceiveImage);
+        //print_r($this->m_ReceiveImage);
+
+        return true;
     }
+
     private function saveImg($ext)
     {
         $save_dir = '\\images\\';
@@ -338,6 +365,28 @@ class ImageAnalizer
             }
         }
         return $rgbarray;
+    }
+
+    private function getFlickerImages($per_page,$page)
+    {
+        $image = array();
+        $Flickr_apikey = "600dfca58e06413caa4125ce28da02b7";
+        $Flickr_getRecent = "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=".$Flickr_apikey."&extras=url_s&per_page=".$per_page."&page=".$page."&format=php_serial";
+        $result = unserialize(file_get_contents($Flickr_getRecent));
+
+        foreach($result["photos"]["photo"] as $k => $photo){
+            if(isset($photo["url_s"])){
+                $url   = $photo["url_s"];
+                $width = $photo["width_s"];
+                $height= $photo["height_s"];
+                //echo $url."<br>\n";
+                //echo '<img src="'.$url.'" width="'.$width.'" height="'.$height.'" >';
+
+                $ext = "image/jpeg";
+                $image[] = new FlickerImage($width,$height,$ext,$url);
+            }
+        }
+        return $image;
     }
 }
 
