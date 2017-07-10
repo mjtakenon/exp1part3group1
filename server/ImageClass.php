@@ -166,20 +166,20 @@ class ImageAnalizer
         {
             $num = 2;
 
-            for($page=1;$page<=2;$page++)
+            foreach($this->m_ReceiveImage->getPixcolor() as $height)
             {
-                $flickerimages = $this->getFlickerImages($num,$page);
-
-                foreach($flickerimages as $flickerimage)
+                foreach($height as $image)
                 {
-                    $img = $this->createImageByUrl($flickerimage->getUrl());
-                    $average = $this->getAverageRGB($img,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1);
-                    var_dump($average);
+                    //var_dump($width->getRGB());
+                    //echo "<br>\n";
+                    $margin = 5000;
+                    var_dump($image->getRGB());
                     echo "<br>\n";
+                    $flickrimage = $this->getSimilarImage($image,$margin);
+                    echo $flickrimage->getUrl()."<br>\n";
                 }
-            }
+            }   
         }
-        
     }
 
     private function initalize($divwidth,$divheight)
@@ -378,6 +378,35 @@ class ImageAnalizer
             }
         }
         return $image;
+    }
+    
+    private function getSimilarImage($src,$margin)
+    {
+        $page = 1;
+        $num = 500;
+        for(;;)
+        {
+            $flickerimages = $this->getFlickerImages($num,$page);
+
+            foreach($flickerimages as $flickerimage)
+            {
+                $image = $this->createImageByUrl($flickerimage->getUrl());
+                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1);
+                
+                if($this->compareImage($src,$average[0][0]) < $margin)
+                {
+                    return $flickerimage;
+                }
+            }
+            $page++;
+        }
+    }
+
+    private function compareImage($src1,$src2)
+    {
+        return abs(pow($src1->getR()-$src2->getR(),2))
+              +abs(pow($src1->getG()-$src2->getG(),2))
+              +abs(pow($src1->getB()-$src2->getB(),2));
     }
 }
 
