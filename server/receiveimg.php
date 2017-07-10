@@ -6,13 +6,12 @@
 	</head>
 	<body>
 		<h2>結果だっていってるだろぉぉぉぉぉん！？</h2>
-		<h4>何で読み込まれないのこいつ</h4>
 		<?php
 			require('ImageClass.php');
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"]))
 			{
 				echo "とりあえずなんか書いとけ";
-				$analizer = new ImageAnalizer(3,3);
+				$analizer = new ImageAnalizer(4,4);
 			}
 			else
 			{
