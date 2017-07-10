@@ -32,7 +32,7 @@ class RGB
     public function getRGB(){
         return $this->RGBColor;
     }
-    
+
     public function getR(){
         return $this->RGBColor['Red'];
     }
@@ -48,7 +48,7 @@ class RGB
         $this->RGBColor['Green'] = $G;
         $this->RGBColor['Blue'] = $B;
     }*/
-    
+
     public function setRGB($rgb){
         $this->RGBColor['Red'] = $rgb->getR();
         $this->RGBColor['Green'] = $rgb->getG();
@@ -64,7 +64,7 @@ class RGB
     public function setB($B){
         $this->RGBColor['Blue'] = $B;
     }
-    
+
 }
 
 //アップロード
@@ -87,7 +87,7 @@ class ReciveImage extends BaseImage
             //$this->pixColor[$i] = array_fill(0,$dx,new RGB());
         }
     }
-    
+
     public function setDivision($x,$y)
     {
         $this->division['X'] = $x;
@@ -151,7 +151,7 @@ class ImageAnalizer
     public function __construct($divwidth,$divheight)
     {
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
-        
+
         $ext = $this->isImageFile($mime_type);
 
         if($ext === "other")
@@ -186,7 +186,7 @@ class ImageAnalizer
             {
                 echo "image created<br>";
             }
-            
+
             $tmpRGB = array();
             for($y = 0; $y < $divheight; $y++)
             {
@@ -246,7 +246,7 @@ class ImageAnalizer
             $save_basename = $save_filename. '.'. $ext;
             $this->save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
         }
-        
+
         if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$this->save_path))
         {
             echo "image save failed".$this->save_path."<br>\n";
@@ -257,7 +257,7 @@ class ImageAnalizer
         }
         chmod($this->save_path,0644);
     }
-    
+
     private function isImageFile($mime_type)
     {
         switch($mime_type)
@@ -288,7 +288,7 @@ class ImageAnalizer
             case IMAGETYPE_BMP:
                 return imagecreatefrombmp($this->save_path);
         }
-    }    
+    }
 
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
