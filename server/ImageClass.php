@@ -155,6 +155,7 @@ class ImageAnalizer
 {
     private $m_ReceiveImage = null;
     private $save_path = "";
+    private $page = 1;
 
     public function __construct($divwidth,$divheight)
     {
@@ -172,11 +173,13 @@ class ImageAnalizer
                 {
                     //var_dump($width->getRGB());
                     //echo "<br>\n";
-                    $margin = 5000;
+                    $margin = 500;
                     var_dump($image->getRGB());
                     echo "<br>\n";
                     $flickrimage = $this->getSimilarImage($image,$margin);
-                    echo $flickrimage->getUrl()."<br>\n";
+                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"><br>\n';
+                    //echo $flickrimage->getUrl()."<br>\n";
+		
                 }
             }   
         }
@@ -380,11 +383,10 @@ class ImageAnalizer
     
     private function getSimilarImage($src,$margin)
     {
-        $page = 1;
-        $num = 500;
+        $num = 50;
         for(;;)
         {
-            $flickerimages = $this->getFlickerImages($num,$page);
+            $flickerimages = $this->getFlickerImages($num,$this->page);
 
             foreach($flickerimages as $flickerimage)
             {
@@ -393,10 +395,13 @@ class ImageAnalizer
                 
                 if($this->compareImage($src,$average[0][0]) < $margin)
                 {
+                    echo "diff = " .$this->compareImage($src,$average[0][0])."<br>\n";
+                    var_dump($average[0][0]->getRGB());
+                    $this->page++;
                     return $flickerimage;
                 }
             }
-            $page++;
+            $this->page++;
         }
     }
 
