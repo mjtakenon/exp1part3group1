@@ -174,15 +174,18 @@ class ImageAnalizer
         }
         else
         {
-            $num = 10;
+            $num = 2;
 
-            for($page=1;$page<=10;$page++)
+            for($page=1;$page<=2;$page++)
             {
                 $flickerimages = $this->getFlickerImages($num,$page);
 
                 foreach($flickerimages as $flickerimage)
                 {
-                    echo $flickerimage->getUrl()."<br>\n";
+                    $img = $this->createImageByUrl($flickerimage->getUrl());
+                    $average = $this->getAverageRGB($img,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1);
+                    var_dump($average);
+                    echo "<br>\n";
                 }
             }
         }
@@ -237,7 +240,7 @@ class ImageAnalizer
         echo "divedwidth=".floor($width/$divwidth)."<br>\n";
         echo "divedheight=".floor($height/$divheight)."<br>\n";
 
-        $image = $this->createImage($mime_type);
+        $image = $this->createImageBySavepath($mime_type);
 
         if(!$image)
         {
@@ -292,12 +295,13 @@ class ImageAnalizer
             case IMAGETYPE_BMP:
                 return "bmp";
             default:
-                return"other";
+                return "other";
         }
     }
 
-    private function createImage($mime_type)
+    private function createImageBySavepath($mime_type)
     {
+
         switch($mime_type)
         {
             case IMAGETYPE_JPEG:
@@ -308,6 +312,22 @@ class ImageAnalizer
                 return imagecreatefromgif($this->save_path);
             case IMAGETYPE_BMP:
                 return imagecreatefrombmp($this->save_path);
+        }
+    }
+    private function createImageByUrl($url)
+    {
+        list($width,$height,$mime_type,$attr) = getimagesize($url);
+        
+        switch($mime_type)
+        {
+            case IMAGETYPE_JPEG:
+                return imagecreatefromjpeg($url);
+            case IMAGETYPE_PNG:
+                return imagecreatefrompng($url);
+            case IMAGETYPE_GIF:
+                return imagecreatefromgif($url);
+            case IMAGETYPE_BMP:
+                return imagecreatefrombmp($url);
         }
     }
 
@@ -377,8 +397,8 @@ class ImageAnalizer
         foreach($result["photos"]["photo"] as $k => $photo){
             if(isset($photo["url_s"])){
                 $url   = $photo["url_s"];
-                $width = $photo["width_s"];
-                $height= $photo["height_s"];
+                $width = $photo["width_s"]-1;
+                $height= $photo["height_s"]-1;
                 //echo $url."<br>\n";
                 //echo '<img src="'.$url.'" width="'.$width.'" height="'.$height.'" >';
 
