@@ -161,7 +161,10 @@ class ImageAnalizer
         }
         else
         {
-            $this->saveImg($ext);
+            if(!$this->saveImg($ext))
+            {
+                echo "image save failed:".$this->save_path."<br>\n";
+            }
 
             echo "path=".$this->save_path."<br>";
             echo "width=".$width."<br>";
@@ -183,10 +186,6 @@ class ImageAnalizer
             {
                 echo "image open failed<br>";
             }
-            else
-            {
-                echo "image created<br>";
-            }
             
             $tmpRGB = array();
             for($y = 0; $y < $divheight; $y++)
@@ -198,46 +197,30 @@ class ImageAnalizer
                 }
             }
 
-            echo "array crated<br>";
-
             for($y = 0; $y < $divheight; $y++)
             {
                 for($x = 0; $x < $divwidth; $x++)
                 {
-                    echo $x."<br>\n";
                     $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight);
-                    echo $x."<br>\n";
-                    var_dump($rgb);
                     $tmpRGB[$y][$x]->setR($rgb->getR());
-                    echo $rgb->getR().":R<br>\n";
                     $tmpRGB[$y][$x]->setG($rgb->getG());
-                    echo $rgb->getG().":G<br>\n";
                     $tmpRGB[$y][$x]->setB($rgb->getB());
-                    echo $rgb->getB().":B<br>\n";
                 }
             }
-            echo "sum\n";
-
 
             for($y = 0; $y < $divheight; $y++)
             {
                 for($x = 0; $x < $divwidth; $x++)
                 {
-                    $tmpRGB[$x][$y]->setR($tmpRGB[$x][$y]->getR()/($divedheight*$divedwidth));
-                    $tmpRGB[$x][$y]->setG($tmpRGB[$x][$y]->getG()/($divedheight*$divedwidth));
-                    $tmpRGB[$x][$y]->setB($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth));
+                    $tmpRGB[$x][$y]->setR(floor($tmpRGB[$x][$y]->getR()/($divedheight*$divedwidth)));
+                    $tmpRGB[$x][$y]->setG(floor($tmpRGB[$x][$y]->getG()/($divedheight*$divedwidth)));
+                    $tmpRGB[$x][$y]->setB(floor($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth)));
                 }
             }
-            echo "div\n";
-
-            echo "ba-ka : $width,$height,$ext,$tmpRGB\n";
 
             $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$tmpRGB);
 
-            echo "calc ok<br>\n";
-            echo "<pre>";
             print_r($this->m_ReceiveImage);
-            echo "</pre>";
         }
     }
 
@@ -257,13 +240,13 @@ class ImageAnalizer
         
         if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$this->save_path))
         {
-            echo "image save failed".$this->save_path."<br>\n";
+            return false;
         }
         else
         {
-            echo "image saved:".$this->save_path."<br>\n";
+            chmod($this->save_path,0644);
+            return true;
         }
-        chmod($this->save_path,0644);
     }
     
     private function isImageFile($mime_type)
@@ -301,27 +284,18 @@ class ImageAnalizer
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
         $sumrgb = new RGB();
-        echo ($xpos).",";
-        echo ($ypos)."<br>\n";
 
         for($y = 0; $y < $ysize; $y++)
         {
             for($x = 0; $x < $xsize; $x++)
             {
-                //echo "$x , $y \n";
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
-                //echo "rgb\n";
                 $colors = imagecolorsforindex($image,$rgb);
-                //echo "clors\n";
                 $sumrgb->setR($sumrgb->getR()+$colors["red"]);
-                //echo "getR\n";
                 $sumrgb->setG($sumrgb->getG()+$colors["green"]);
-                //echo "getG\n";
                 $sumrgb->setB($sumrgb->getB()+$colors["blue"]);
-                //echo "getB";
             }
         }
-        //echo "okkannsuu\n";
         return $sumrgb;
     }
 }
