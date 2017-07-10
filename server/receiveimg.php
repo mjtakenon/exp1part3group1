@@ -6,6 +6,7 @@
 	</head>
 	<body>
 		<h2>結果だっていってるだろぉぉぉぉぉん！？</h2>
+		<h4>何で読み込まれないのこいつ</h4>
 		<?php
 			require('ImageClass.php');
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"]))
