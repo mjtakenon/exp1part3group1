@@ -174,11 +174,6 @@ class ImageAnalizer
             echo "divwidth=".$divwidth."<br>";
             echo "divheight=".$divheight."<br>";
 
-            $divedwidth = floor($width/$divwidth);
-            $divedheight = floor($height/$divheight);
-
-            echo "divedwidth=".$divedwidth."<br>";
-            echo "divedheight=".$divedheight."<br>";
 
             $image = $this->createImage($mime_type);
 
@@ -187,40 +182,11 @@ class ImageAnalizer
                 echo "image open failed<br>";
             }
             
-            $tmpRGB = array();
-            for($y = 0; $y < $divheight; $y++)
-            {
-                $tmpRGB[$y] = array();
-                for($x = 0; $x < $divwidth; $x++)
-                {
-                    $tmpRGB[$y][$x] = new RGB();
-                }
-            }
+            $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight);
 
-            for($y = 0; $y < $divheight; $y++)
-            {
-                for($x = 0; $x < $divwidth; $x++)
-                {
-                    $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight);
-                    $tmpRGB[$y][$x]->setR($rgb->getR());
-                    $tmpRGB[$y][$x]->setG($rgb->getG());
-                    $tmpRGB[$y][$x]->setB($rgb->getB());
-                }
-            }
+            $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
 
-            for($y = 0; $y < $divheight; $y++)
-            {
-                for($x = 0; $x < $divwidth; $x++)
-                {
-                    $tmpRGB[$x][$y]->setR(floor($tmpRGB[$x][$y]->getR()/($divedheight*$divedwidth)));
-                    $tmpRGB[$x][$y]->setG(floor($tmpRGB[$x][$y]->getG()/($divedheight*$divedwidth)));
-                    $tmpRGB[$x][$y]->setB(floor($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth)));
-                }
-            }
-
-            $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$tmpRGB);
-
-            //print_r($this->m_ReceiveImage);
+            print_r($this->m_ReceiveImage);
         }
     }
 
@@ -297,6 +263,47 @@ class ImageAnalizer
             }
         }
         return $sumrgb;
+    }
+
+    private function getAverageRGB($image,$width,$height,$divwidth,$divheight)
+    {
+        $divedwidth = floor($width/$divwidth);
+        $divedheight = floor($height/$divheight);
+
+        echo "divedwidth=".$divedwidth."<br>";
+        echo "divedheight=".$divedheight."<br>";
+        
+        $tmpRGB = array();
+        for($y = 0; $y < $divheight; $y++)
+        {
+            $tmpRGB[$y] = array();
+            for($x = 0; $x < $divwidth; $x++)
+            {
+                $tmpRGB[$y][$x] = new RGB();
+            }
+        }
+
+        for($y = 0; $y < $divheight; $y++)
+        {
+            for($x = 0; $x < $divwidth; $x++)
+            {
+                $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight);
+                $tmpRGB[$y][$x]->setR($rgb->getR());
+                $tmpRGB[$y][$x]->setG($rgb->getG());
+                $tmpRGB[$y][$x]->setB($rgb->getB());
+            }
+        }
+
+        for($y = 0; $y < $divheight; $y++)
+        {
+            for($x = 0; $x < $divwidth; $x++)
+            {
+                $tmpRGB[$x][$y]->setR(floor($tmpRGB[$x][$y]->getR()/($divedheight*$divedwidth)));
+                $tmpRGB[$x][$y]->setG(floor($tmpRGB[$x][$y]->getG()/($divedheight*$divedwidth)));
+                $tmpRGB[$x][$y]->setB(floor($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth)));
+            }
+        }
+        return $tmpRGB;
     }
 }
 
