@@ -220,7 +220,7 @@ class ImageAnalizer
 
             $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$tmpRGB);
 
-            print_r($this->m_ReceiveImage);
+            //print_r($this->m_ReceiveImage);
         }
     }
 
