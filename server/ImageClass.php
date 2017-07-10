@@ -161,6 +161,7 @@ class ImageAnalizer
 {
     private $m_ReceiveImage = null;
     private $save_path = "";
+    private $page = 1;
 
     public function __construct($divwidth,$divheight)
     {
@@ -176,16 +177,19 @@ class ImageAnalizer
         {
             $num = 2;
 
-            for($page=1;$page<=2;$page++)
+            foreach($this->m_ReceiveImage->getPixcolor() as $height)
             {
-                $flickerimages = $this->getFlickerImages($num,$page);
-
-                foreach($flickerimages as $flickerimage)
+                foreach($height as $image)
                 {
-                    $img = $this->createImageByUrl($flickerimage->getUrl());
-                    $average = $this->getAverageRGB($img,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1);
-                    var_dump($average);
+                    //var_dump($width->getRGB());
+                    //echo "<br>\n";
+                    $margin = 500;
+                    var_dump($image->getRGB());
                     echo "<br>\n";
+                    $flickrimage = $this->getSimilarImage($image,$margin);
+                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"><br>\n';
+                    //echo $flickrimage->getUrl()."<br>\n";
+
                 }
             }
         }
@@ -317,7 +321,7 @@ class ImageAnalizer
     private function createImageByUrl($url)
     {
         list($width,$height,$mime_type,$attr) = getimagesize($url);
-        
+
         switch($mime_type)
         {
             case IMAGETYPE_JPEG:
@@ -399,14 +403,43 @@ class ImageAnalizer
                 $url   = $photo["url_s"];
                 $width = $photo["width_s"]-1;
                 $height= $photo["height_s"]-1;
-                //echo $url."<br>\n";
-                //echo '<img src="'.$url.'" width="'.$width.'" height="'.$height.'" >';
 
                 $ext = "image/jpeg";
                 $image[] = new FlickerImage($width,$height,$ext,$url);
             }
         }
         return $image;
+    }
+
+    private function getSimilarImage($src,$margin)
+    {
+        $num = 50;
+        for(;;)
+        {
+            $flickerimages = $this->getFlickerImages($num,$this->page);
+
+            foreach($flickerimages as $flickerimage)
+            {
+                $image = $this->createImageByUrl($flickerimage->getUrl());
+                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1);
+
+                if($this->compareImage($src,$average[0][0]) < $margin)
+                {
+                    echo "diff = " .$this->compareImage($src,$average[0][0])."<br>\n";
+                    var_dump($average[0][0]->getRGB());
+                    $this->page++;
+                    return $flickerimage;
+                }
+            }
+            $this->page++;
+        }
+    }
+
+    private function compareImage($src1,$src2)
+    {
+        return abs(pow($src1->getR()-$src2->getR(),2))
+              +abs(pow($src1->getG()-$src2->getG(),2))
+              +abs(pow($src1->getB()-$src2->getB(),2));
     }
 }
 
