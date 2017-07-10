@@ -71,21 +71,22 @@ class RGB
 class ReciveImage extends BaseImage
 {
     private $division = array('X' => 0,'Y' => 0);
-    private $size = array('width' => 0, 'height' => 0);
-    private $ext = "";
+    //private $size = array('width' => 0, 'height' => 0);
+    //private $ext = "";
     private $pixColor = null;
 
     function __construct($w,$h,$e,$dimg){
         parent::__construct($w,$h,$e);
+        echo count($dimg[0]).",".count($dimg);
+        $this->setDivision(count($dimg[0]),count($dimg));
+        //$this->setSize($w,$h);
+        //$this->setExt($e);
 
-        $this->setDivision($dimg[0],count($dimg));
-        $this->setSize($w,$h);
-        $this->setExt($e);
+        //for ($i=0; $i < $dy; $i++) {
 
-        for ($i=0; $i < $dy; $i++) {
             $this->pixColor = $dimg;
             //$this->pixColor[$i] = array_fill(0,$dx,new RGB());
-        }
+        //}
     }
 
     public function setDivision($x,$y)
@@ -156,83 +157,76 @@ class ImageAnalizer
 
         if($ext === "other")
         {
-            echo "画像ファイルを選択してください。";
+            //画像処理
+            //flickerから取ってきたりする
         }
         else
         {
-            $this->saveImg($ext);
-
-            echo "path=".$this->save_path."<br>";
-            echo "width=".$width."<br>";
-            echo "height=".$height."<br>";
-            echo "ext=".$ext."<br>";
-
-            echo "divwidth=".$divwidth."<br>";
-            echo "divheight=".$divheight."<br>";
-
-            $divedwidth = floor($width/$divwidth);
-            $divedheight = floor($height/$divheight);
-
-            echo "divedwidth=".$divedwidth."<br>";
-            echo "divedheight=".$divedheight."<br>";
-
-            $image = $this->createImage($mime_type);
-
-            if(!$image)
-            {
-                echo "image open failed<br>";
-            }
-            else
-            {
-                echo "image created<br>";
-            }
-
-            $tmpRGB = array();
-            for($y = 0; $y < $divheight; $y++)
-            {
-                $tmpRGB[$y] = array();
-                for($x = 0; $x < $divwidth; $x++)
-                {
-                    $tmpRGB[$x][$y] = new RGB();
-                }
-            }
-
-            echo "array crated<br>";
-
-            for($y = 0; $y < $divheight; $y++)
-            {
-                for($x = 0; $x < $divwidth; $x++)
-                {
-                    echo $x."<br>\n";
-                    $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight);
-                    $tmpRGB[$x][$y]->setR($rgb->getR());
-                    echo $rgb->getR().":R<br>\n";
-                    $tmpRGB[$x][$y]->setG($rgb->getG());
-                    echo $rgb->getG().":G<br>\n";
-                    $tmpRGB[$x][$y]->setB($rgb->getB());
-                    echo $rgb->getB().":B<br>\n";
-                }
-            }
-            echo "sum\n";
-
-
-            for($y = 0; $y < $divheight; $y++)
-            {
-                for($x = 0; $x < $divwidth; $x++)
-                {
-                    $tmpRGB[$x][$y]->setR($tmpRGB[$x][$y]->getR()/($divedheight*$divedwidth));
-                    $tmpRGB[$x][$y]->setG($tmpRGB[$x][$y]->getG()/($divedheight*$divedwidth));
-                    $tmpRGB[$x][$y]->setB($tmpRGB[$x][$y]->getB()/($divedheight*$divedwidth));
-                }
-            }
-            echo "div\n";
-
-            $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$tmpRGB);
-
-            echo "calc ok<br>\n";
+            //エラー処理
         }
+
     }
 
+    private function initalize($divwidth,$divheight)
+    {
+        list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
+
+        $ext = $this->isImageFile($mime_type);
+
+        if($ext === "other")
+        {
+            echo "画像ファイルを選択してください。<br>";
+            return false;
+        }
+
+        if(!$this->saveImg($ext))
+        {
+            echo "画像の保存ができませんでした。<br>path=".$this->save_path."<br>\n";
+            return false;
+        }
+
+        echo "path=".$this->save_path."<br>";
+        echo "width=".$width."<br>";
+        echo "height=".$height."<br>";
+        echo "ext=".$ext."<br>";
+
+
+        if(!$image)
+        {
+            echo "image open failed<br>";
+        }
+        else
+        {
+            echo "image created<br>";
+        }
+
+        $tmpRGB = array();
+        for($y = 0; $y < $divheight; $y++)
+        {
+            $tmpRGB[$y] = array();
+            for($x = 0; $x < $divwidth; $x++)
+            {
+                $tmpRGB[$x][$y] = new RGB();
+            }
+        }
+
+        echo "divedwidth=".floor($width/$divwidth)."<br>";
+        echo "divedheight=".floor($height/$divheight)."<br>";
+
+        $image = $this->createImage($mime_type);
+
+        if(!$image)
+        {
+            echo "保存した画像を開けませんでした。<br>";
+            return false;
+        }
+
+        $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight);
+
+        $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
+
+        print_r($this->m_ReceiveImage);
+    }
     private function saveImg($ext)
     {
         $save_dir = '\\images\\';
@@ -249,13 +243,13 @@ class ImageAnalizer
 
         if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$this->save_path))
         {
-            echo "image save failed".$this->save_path."<br>\n";
+            return false;
         }
         else
         {
-            echo "image saved:".$this->save_path."<br>\n";
+            chmod($this->save_path,0644);
+            return true;
         }
-        chmod($this->save_path,0644);
     }
 
     private function isImageFile($mime_type)
@@ -293,12 +287,10 @@ class ImageAnalizer
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
     {
         $sumrgb = new RGB();
-        echo ($xpos).",";
-        echo ($ypos)."<br>\n";
 
-        for($y = 0; $y < $ysize-1; $y++)
+        for($y = 0; $y < $ysize; $y++)
         {
-            for($x = 0; $x < $xsize-1; $x++)
+            for($x = 0; $x < $xsize; $x++)
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
@@ -308,6 +300,44 @@ class ImageAnalizer
             }
         }
         return $sumrgb;
+    }
+
+    private function getAverageRGB($image,$width,$height,$divwidth,$divheight)
+    {
+        $divedwidth = floor($width/$divwidth);
+        $divedheight = floor($height/$divheight);
+
+        $rgbarray = array();
+        for($y = 0; $y < $divheight; $y++)
+        {
+            $rgbarray[$y] = array();
+            for($x = 0; $x < $divwidth; $x++)
+            {
+                $rgbarray[$y][$x] = new RGB();
+            }
+        }
+
+        for($y = 0; $y < $divheight; $y++)
+        {
+            for($x = 0; $x < $divwidth; $x++)
+            {
+                $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight);
+                $rgbarray[$y][$x]->setR($rgb->getR());
+                $rgbarray[$y][$x]->setG($rgb->getG());
+                $rgbarray[$y][$x]->setB($rgb->getB());
+            }
+        }
+
+        for($y = 0; $y < $divheight; $y++)
+        {
+            for($x = 0; $x < $divwidth; $x++)
+            {
+                $rgbarray[$x][$y]->setR(floor($rgbarray[$x][$y]->getR()/($divedheight*$divedwidth)));
+                $rgbarray[$x][$y]->setG(floor($rgbarray[$x][$y]->getG()/($divedheight*$divedwidth)));
+                $rgbarray[$x][$y]->setB(floor($rgbarray[$x][$y]->getB()/($divedheight*$divedwidth)));
+            }
+        }
+        return $rgbarray;
     }
 }
 
