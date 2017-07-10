@@ -130,6 +130,27 @@ class SendImage extends BaseImage
     }
 }
 
+class FlickerImage extends BaseImage
+{
+    private $url;
+    
+    function __construct($w,$h,$e,$u)
+    {
+        parent::__construct($w,$h,$e);
+        $this->url = $u;
+    }
+
+    function getUrl() 
+    {
+        return $this->url;
+    }
+
+    function setUrl($u)
+    {
+        $this->url = $u;
+    }
+}
+
 class ImageAnalizer
 {
     private $m_ReceiveImage = null;
@@ -143,18 +164,15 @@ class ImageAnalizer
         }
         else
         {
-            $Flickr_apikey = "600dfca58e06413caa4125ce28da02b7";
-            $Flickr_getRecent = "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=".$Flickr_apikey."&extras=url_s&per_page=500&format=php_serial";
-            $result = unserialize(file_get_contents($Flickr_getRecent));
-           
-            foreach($result["photos"]["photo"] as $k => $photo){
-                if(isset($photo["url_s"])){
-                    $url   = $photo["url_s"];
-                    $width = $photo["width_s"];
-                    $height= $photo["height_s"];
-                    $size  = max($width,$height);
-                    echo $url."<br>\n";
-                    //echo '<img src="'.$url.'" width="'.$width.'" height="'.$height.'" >';
+            $num = 10;
+
+            for($page=1;$page<=10;$page++)
+            {
+                $flickerimages = $this->getFlickerImages($num,$page);
+
+                foreach($flickerimages as $flickerimage)
+                {
+                    echo $flickerimage->getUrl()."<br>\n";
                 }
             }
         }
@@ -201,11 +219,12 @@ class ImageAnalizer
         $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight);
 
         $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
-
+        
         //print_r($this->m_ReceiveImage);
 
         return true;
     }
+
     private function saveImg($ext)
     {
         $save_dir = '\\images\\';
@@ -317,6 +336,28 @@ class ImageAnalizer
             }
         }
         return $rgbarray;
+    }
+
+    private function getFlickerImages($per_page,$page)
+    {
+        $image = array();
+        $Flickr_apikey = "600dfca58e06413caa4125ce28da02b7";
+        $Flickr_getRecent = "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=".$Flickr_apikey."&extras=url_s&per_page=".$per_page."&page=".$page."&format=php_serial";
+        $result = unserialize(file_get_contents($Flickr_getRecent));
+        
+        foreach($result["photos"]["photo"] as $k => $photo){
+            if(isset($photo["url_s"])){
+                $url   = $photo["url_s"];
+                $width = $photo["width_s"];
+                $height= $photo["height_s"];
+                //echo $url."<br>\n";
+                //echo '<img src="'.$url.'" width="'.$width.'" height="'.$height.'" >';
+
+                $ext = "image/jpeg";
+                $image[] = new FlickerImage($width,$height,$ext,$url);
+            }
+        }
+        return $image;
     }
 }
 
