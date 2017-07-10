@@ -370,8 +370,6 @@ class ImageAnalizer
                 $url   = $photo["url_s"];
                 $width = $photo["width_s"]-1;
                 $height= $photo["height_s"]-1;
-                //echo $url."<br>\n";
-                //echo '<img src="'.$url.'" width="'.$width.'" height="'.$height.'" >';
 
                 $ext = "image/jpeg";
                 $image[] = new FlickerImage($width,$height,$ext,$url);
