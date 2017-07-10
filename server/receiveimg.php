@@ -10,6 +10,7 @@
 			require('ImageClass.php');
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"]))
 			{
+				echo "とりあえずなんか書いとけ";
 				$analizer = new ImageAnalizer(3,3);
 			}
 			else

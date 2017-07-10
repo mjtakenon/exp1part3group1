@@ -166,9 +166,9 @@ class ImageAnalizer
     public function __construct($divwidth,$divheight)
     {
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
-
+        echo "getimagexize\n";
         $ext = $this->isImageFile($mime_type);
-
+        echo "isImageFil\n";
         if($ext === "other")
         {
             echo "画像の初期化に失敗しました。<br>\n";
@@ -183,6 +183,7 @@ class ImageAnalizer
                 {
                     //var_dump($width->getRGB());
                     //echo "<br>\n";
+                    echo "$image\n";
                     $margin = 500;
                     var_dump($image->getRGB());
                     echo "<br>\n";
