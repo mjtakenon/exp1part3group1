@@ -173,17 +173,16 @@ class ImageAnalizer
                     //var_dump($width->getRGB());
                     //echo '\n';
                     $margin = 500;
-                    var_dump($image->getRGB());
+                    //var_dump($image->getRGB());
                     $flickrimage = $this->getSimilarImage($image,$margin);
-                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"/>\n';
+                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"/>'."\n";
                     //echo $flickrimage->getUrl().'\n';
                     $end_time = microtime(true);
 		
-                    echo '画像取得時間:'.($end_time-$start_time).'秒';
+                    echo "画像取得時間:".($end_time-$start_time)."秒\n";
                 }
-            }   
+            }
         }
-
     }
 
     //初期化 成功するとtrue,失敗するとfalseを返す
@@ -324,7 +323,11 @@ class ImageAnalizer
         }
     }
     //urlより画像データの作成(jpgのみ)
-    
+    private function createImageByJpegUrl($url)
+    {
+        return imagecreatefromjpeg($url);
+    }
+
     //画像の合計画素値をRGBで返す $xpos,$yposを左上座標に$xsize,$ysizeの大きさで,$space飛ばしで
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize,$space)
     {
@@ -399,14 +402,13 @@ class ImageAnalizer
                 $url   = $photo['url_s'];
                 $width = $photo['width_s']-1;
                 $height= $photo['height_s']-1;
-
                 $image[] = new FlickerImage($width,$height,$ext,$url);
             }
         }
         return $image;
     }
     
-    //FlickrImage[]から似た画像を返す
+    //FlickrImage[]から似た画像を返す marginに画素値の差の許容を表示
     private function getSimilarImage($src,$margin)
     {
         $num = 500;
@@ -417,14 +419,24 @@ class ImageAnalizer
 
             foreach($flickerimages as $flickerimage)
             {
-                $image = $this->createImageByUrl($flickerimage->getUrl());
+                $start_time = microtime(true);
+
+                $image = $this->createImageByJpegUrl($flickerimage->getUrl());
+                
+                $end_time = microtime(true);
+                echo "createtime:".($end_time-$start_time)."秒 \n";
+                $start_time = microtime(true);
+
                 $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1,4);
                 
+                $end_time = microtime(true);
+                echo "averagetime:".($end_time-$start_time)."秒 \n";
+
                 if($this->compareImage($src,$average[0][0]) < $margin)
                 {
                     echo "diff = " .$this->compareImage($src,$average[0][0])."\n";
                     echo "count = " .$count."\n";
-                    var_dump($average[0][0]->getRGB());
+                    //var_dump($average[0][0]->getRGB());
                     ++$this->page;
                     return $flickerimage;
                 }
