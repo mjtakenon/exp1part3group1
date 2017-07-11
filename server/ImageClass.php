@@ -69,7 +69,7 @@ class RGB
 }
 
 //アップロード
-class ReciveImage extends BaseImage
+class ReceiveImage extends BaseImage
 {
     private $division = array('X' => 0,'Y' => 0);
     private $pixColor = null;
@@ -166,7 +166,7 @@ class ImageAnalizer
             $margin = 500;
 
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
-
+            echo "returned\n";
             foreach($flickrimages as $row)
             {
                 foreach($row as $image)
@@ -226,7 +226,7 @@ class ImageAnalizer
         $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight,1);
 
         //受信した画像のクラスを作成
-        $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
+        $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$averageRGB);
         
         //print_r($this->m_ReceiveImage);
         $end_time = microtime(true);
@@ -390,28 +390,28 @@ class ImageAnalizer
         $ext = 'image/jpeg';
 
         foreach($result['photos']['photo'] as $k => $photo){
-            if(isset($photo['url_s'])){
-                $url   = $photo['url_s'];
-                $width = $photo['width_s']-1;
-                $height= $photo['height_s']-1;
+            if(isset($photo['url_sq'])){
+                $url   = $photo['url_sq'];
+                $width = $photo['width_sq']-1;
+                $height= $photo['height_sq']-1;
                 $image[] = new flickrImage($width,$height,$ext,$url);
             }
         }
         return $image;
     }
     
-    //FlickrImage[]から似た画像を返す marginに画素値の差の許容を表示
+    //FlickrImage[]から似た画像を返す marginは画素値の差の許容
     private function getSimilarImage($src,$margin)
     {
         $num = 500;
         $count = 1;
 
         $flickrarray = array();
-        for($y = 0; $y < $src->getDivision()['y']; ++$y)
+        for($y = 0; $y < $src->getDivision()['Y']; ++$y)
         {
             $flickrarray[] = array();
             
-            for($x = 0; $x < $src->getDivision()['x']; ++$x)
+            for($x = 0; $x < $src->getDivision()['X']; ++$x)
             {
                 $flickrarray[$y][] = null;
             }
@@ -422,14 +422,14 @@ class ImageAnalizer
         {
             //Flickrの画像arrayをnum個とpageを指定して取得してくる
             $flickrimages = $this->getflickrImages($num,$this->page);
-
+            
             //array内の画像を走査
             foreach($flickrimages as $flickrimage)
             {
                 //URLからリソースに変換
                 $image = $this->createImageByJpegUrl($flickrimage->getUrl());
                 
-                //リソースの平均が措置を出す
+                //リソースの平均画素値を出す
                 $average = $this->getAverageRGB($image,$flickrimage->getWidth(),$flickrimage->getHeight(),1,1,5);
                 
                 //クライアントから送られた画像の分割部と照合してく
@@ -442,21 +442,26 @@ class ImageAnalizer
                         //照合が終わってなく、比較結果がしきい値以下だったら
                         if($flickrarray[$x][$y] === null && $this->compareImage($srcimg,$average[0][0]) < $margin)
                         {
-                            echo "diff = " .$this->compareImage($src,$average[0][0])."\n";
+                            echo "diff = " .$this->compareImage($srcimg,$average[0][0])."\n";
                             echo "count = " .$count."\n";
 
                             $flickrarray[$x][$y] = $flickrimage;
 
-                            for($i = 0; $i < count($src); ++$i)
+                            //全ての更新が終わってたらflickrarrayの配列を返す
+                            $hadNull = false;
+                            for($i = 0; $i < $src->getDivision()['Y']; ++$i)
                             {
-                                if(array_search(null,$flickrarray[$i]))
+                                for($j = 0; $j < $src->getDivision()['X']; ++$j)
                                 {
-                                    break;
+                                    if($flickrarray[$j][$i] === null)
+                                    {
+                                        $hadNull = true;
+                                    }
                                 }
-                                else if(($i-1) == count($src))
-                                {
-                                    return $flickrarray;
-                                }
+                            }
+                            if($hadNull === false)
+                            {
+                                return $flickrarray;
                             }
                         }
                         else
