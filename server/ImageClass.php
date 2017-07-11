@@ -69,7 +69,7 @@ class RGB
 }
 
 //アップロード
-class ReciveImage extends BaseImage
+class ReceiveImage extends BaseImage
 {
     private $division = array('X' => 0,'Y' => 0);
     private $pixColor = null;
@@ -128,7 +128,7 @@ class SendImage extends BaseImage
     }
 }
 
-class FlickerImage extends BaseImage
+class flickrImage extends BaseImage
 {
     private $url;
     
@@ -163,25 +163,25 @@ class ImageAnalizer
         }
         else
         {
-            $num = 2;
+            $margin = 1000;
 
-            foreach($this->m_ReceiveImage->getPixcolor() as $row)
+            $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
+            
+            $width = $this->m_ReceiveImage->getWidth()/$this->m_ReceiveImage->getDivision()['X'];
+            $height = $this->m_ReceiveImage->getHeight()/$this->m_ReceiveImage->getDivision()['Y'];
+            echo "returnd\n";
+            echo '<table border="0" cellspacing="0" cellpadding="0" >'."\n";
+            
+            foreach($flickrimages as $row)
             {
+                echo '<tr>';
                 foreach($row as $image)
                 {
-                    $start_time = microtime(true);
-                    //var_dump($width->getRGB());
-                    //echo '\n';
-                    $margin = 500;
-                    //var_dump($image->getRGB());
-                    $flickrimage = $this->getSimilarImage($image,$margin);
-                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"/>'."\n";
-                    //echo $flickrimage->getUrl().'\n';
-                    $end_time = microtime(true);
-		
-                    echo "画像取得時間:".($end_time-$start_time)."秒\n";
+                    echo '<td><img src="'.$image->getUrl().'" width="'.$width.'" height="'.$height.'"/></td>'."\n";
                 }
+                echo "</tr>\n";
             }
+			echo "</table>\n";
         }
     }
 
@@ -234,7 +234,7 @@ class ImageAnalizer
         $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight,1);
 
         //受信した画像のクラスを作成
-        $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
+        $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$averageRGB);
         
         //print_r($this->m_ReceiveImage);
         $end_time = microtime(true);
@@ -388,62 +388,105 @@ class ImageAnalizer
     }
 
     //flickrのAPIを叩いてFlickrImage[]を返す
-    private function getFlickerImages($per_page,$page)
+    private function getflickrImages($per_page,$page)
     {
         $image = array();
         $Flickr_apikey = '600dfca58e06413caa4125ce28da02b7';
-        $Flickr_getRecent = 'https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key='.$Flickr_apikey.'&extras=url_s&per_page='.$per_page.'&page='.$page.'&format=php_serial';
+        $Flickr_getRecent = 'https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key='.$Flickr_apikey.'&extras=url_sq&per_page='.$per_page.'&page='.$page.'&format=php_serial';
         $result = unserialize(file_get_contents($Flickr_getRecent));
         
         $ext = 'image/jpeg';
 
         foreach($result['photos']['photo'] as $k => $photo){
-            if(isset($photo['url_s'])){
-                $url   = $photo['url_s'];
-                $width = $photo['width_s']-1;
-                $height= $photo['height_s']-1;
-                $image[] = new FlickerImage($width,$height,$ext,$url);
+            if(isset($photo['url_sq'])){
+                $url   = $photo['url_sq'];
+                $width = $photo['width_sq']-1;
+                $height= $photo['height_sq']-1;
+                $image[] = new flickrImage($width,$height,$ext,$url);
             }
         }
         return $image;
     }
     
-    //FlickrImage[]から似た画像を返す marginに画素値の差の許容を表示
+    //FlickrImage[]から似た画像を返す marginは画素値の差の許容
     private function getSimilarImage($src,$margin)
     {
         $num = 500;
         $count = 1;
+
+        $flickrarray = array();
+        for($y = 0; $y < $src->getDivision()['Y']; ++$y)
+        {
+            $flickrarray[] = array();
+            
+            for($x = 0; $x < $src->getDivision()['X']; ++$x)
+            {
+                $flickrarray[$y][] = null;
+            }
+        }
+
+        //ページ最後まで探索してもなかったら繰り返す
         for(;;)
         {
-            $flickerimages = $this->getFlickerImages($num,$this->page);
-
-            foreach($flickerimages as $flickerimage)
+            //Flickrの画像arrayをnum個とpageを指定して取得してくる
+            $flickrimages = $this->getflickrImages($num,$this->page);
+            
+            //array内の画像を走査
+            foreach($flickrimages as $flickrimage)
             {
-                $start_time = microtime(true);
-
-                $image = $this->createImageByJpegUrl($flickerimage->getUrl());
-                
-                $end_time = microtime(true);
-                echo "createtime:".($end_time-$start_time)."秒 \n";
-                $start_time = microtime(true);
-
-                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1,4);
-                
-                $end_time = microtime(true);
-                echo "averagetime:".($end_time-$start_time)."秒 \n";
-
-                if($this->compareImage($src,$average[0][0]) < $margin)
+                $url = $flickrimage->getUrl();
+                if(!isset($url))
                 {
-                    echo "diff = " .$this->compareImage($src,$average[0][0])."\n";
-                    echo "count = " .$count."\n";
-                    //var_dump($average[0][0]->getRGB());
-                    ++$this->page;
-                    return $flickerimage;
+                    continue;
                 }
-                else
+
+                //URLからリソースに変換
+                $image = $this->createImageByJpegUrl($flickrimage->getUrl());
+                
+                //リソースの平均画素値を出す
+                $average = $this->getAverageRGB($image,$flickrimage->getWidth(),$flickrimage->getHeight(),1,1,5);
+                
+                //クライアントから送られた画像の分割部と照合してく
+                $x = 0;
+                foreach($src->getPixcolor() as $row)
                 {
-                    $count ++;
+                    $y = 0;
+                    foreach($row as $srcimg)
+                    {
+                        //照合が終わってなく、比較結果がしきい値以下だったら
+                        if($flickrarray[$x][$y] === null && $this->compareImage($srcimg,$average[0][0]) < $margin)
+                        {
+                            echo "diff = " .$this->compareImage($srcimg,$average[0][0]).",";
+                            echo "count = " .$count."\n";
+
+                            $flickrarray[$x][$y] = $flickrimage;
+
+                            //全ての更新が終わってたらflickrarrayの配列を返す
+                            $hadNull = false;
+                            for($i = 0; $i < $src->getDivision()['Y']; ++$i)
+                            {
+                                for($j = 0; $j < $src->getDivision()['X']; ++$j)
+                                {
+                                    if($flickrarray[$j][$i] === null)
+                                    {
+                                        $hadNull = true;
+                                    }
+                                }
+                            }
+                            if($hadNull === false)
+                            {
+                                return $flickrarray;
+                            }
+                        }
+                        else
+                        {
+                            $count ++;
+                        }
+                        ++$y;
+                    }
+                    ++$x;
                 }
+                
             }
             ++$this->page;
         }
@@ -452,9 +495,9 @@ class ImageAnalizer
     //画像の比較 |R^2|+|G^2|+|B^2|の値を返す
     private function compareImage($src1,$src2)
     {
-        return abs(pow($src1->getR()-$src2->getR(),2))
-              +abs(pow($src1->getG()-$src2->getG(),2))
-              +abs(pow($src1->getB()-$src2->getB(),2));
+        return pow($src1->getR()-$src2->getR(),2)
+              +pow($src1->getG()-$src2->getG(),2)
+              +pow($src1->getB()-$src2->getB(),2);
     }
 }
 ?>
