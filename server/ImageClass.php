@@ -4,7 +4,7 @@ class BaseImage
 {
     private $width = 0;
     private $height = 0;
-    private $ext = "";//extension 拡張子
+    private $ext = '';//extension 拡張子
 
     function __construct($w,$h,$e)
     {
@@ -52,10 +52,8 @@ class RGB
         return $this->RGBColor['Blue'];
     }
 
-    public function setRGB($R,$G,$B){
-        $this->RGBColor['Red'] = $R;
-        $this->RGBColor['Green'] = $G;
-        $this->RGBColor['Blue'] = $B;
+    public function setRGB($rgb){
+        $this->RGBColor = $rgb;
     }
 
     public function setR($R){
@@ -78,7 +76,7 @@ class ReciveImage extends BaseImage
 
     function __construct($w,$h,$e,$dimg){
         parent::__construct($w,$h,$e);
-        //echo count($dimg[0]).",".count($dimg);
+        //echo count($dimg[0]).','.count($dimg);
         $this->setDivision(count($dimg[0]),count($dimg));
         
         //for ($i=0; $i < $dy; $i++) {
@@ -154,32 +152,34 @@ class FlickerImage extends BaseImage
 class ImageAnalizer
 {
     private $m_ReceiveImage = null;
-    private $save_path = "";
+    private $save_path = '';
     private $page = 1;
 
     public function __construct($divwidth,$divheight)
     {
         if(!$this->initalize($divwidth,$divheight))
         {
-            echo "画像の初期化に失敗しました。<br>\n";
+            echo '画像の初期化に失敗しました。\n';
         }
         else
         {
             $num = 2;
 
-            foreach($this->m_ReceiveImage->getPixcolor() as $height)
+            foreach($this->m_ReceiveImage->getPixcolor() as $row)
             {
-                foreach($height as $image)
+                foreach($row as $image)
                 {
+                    $start_time = microtime(true);
                     //var_dump($width->getRGB());
-                    //echo "<br>\n";
+                    //echo '\n';
                     $margin = 500;
                     var_dump($image->getRGB());
-                    echo "<br>\n";
                     $flickrimage = $this->getSimilarImage($image,$margin);
-                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"><br>\n';
-                    //echo $flickrimage->getUrl()."<br>\n";
+                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200">';
+                    //echo $flickrimage->getUrl().'\n';
+                    $end_time = microtime(true);
 		
+                    echo '画像取得時間:'.($end_time-$start_time).'秒';
                 }
             }   
         }
@@ -188,43 +188,45 @@ class ImageAnalizer
     //初期化 成功するとtrue,失敗するとfalseを返す
     private function initalize($divwidth,$divheight)
     {
+        $start_time = microtime(true);
+
         //画像データの取得
-        list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
+        list($width,$height,$mime_type,$attr) = getimagesize($_FILES['upfile']['tmp_name']);
 
         //画像ファイル種別の取得
         $ext = $this->isImageFile($mime_type);
 
-        if($ext === "other")
+        if($ext === 'other')
         {
-            echo "画像ファイルを選択してください。<br>\n";
+            echo '画像ファイルを選択してください。\n';
             return false;
         }
 
         //画像をimages/に保存
         if(!$this->saveImg($ext))
         {
-            echo "画像の保存ができませんでした。<br>path=".$this->save_path."<br>\n";
+            echo '画像の保存ができませんでした。path='.$this->save_path.'\n';
             return false;
         }
 
         //クライアントから送られた情報の表示
-        echo "path=".$this->save_path."<br>\n";
-        echo "width=".$width."<br>\n";
-        echo "height=".$height."<br>\n";
-        echo "ext=".$ext."<br>\n";
+        echo 'path='.$this->save_path.'\n';
+        echo 'width='.$width.'\n';
+        echo 'height='.$height.'\n';
+        echo 'ext='.$ext.'\n';
 
-        echo "divwidth=".$divwidth."<br>\n";
-        echo "divheight=".$divheight."<br>\n";
+        echo 'divwidth='.$divwidth.'\n';
+        echo 'divheight='.$divheight.'\n';
 
-        echo "divedwidth=".floor($width/$divwidth)."<br>\n";
-        echo "divedheight=".floor($height/$divheight)."<br>\n";
+        echo 'divedwidth='.floor($width/$divwidth).'\n';
+        echo 'divedheight='.floor($height/$divheight).'\n';
 
         //保存したローカルデータから画像の作成
         $image = $this->createImageBySavepath($mime_type);
 
         if(!$image)
         {
-            echo "保存した画像を開けませんでした。<br>\n";
+            echo '保存した画像を開けませんでした。\n';
             return false;
         }
         
@@ -235,6 +237,9 @@ class ImageAnalizer
         $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
         
         //print_r($this->m_ReceiveImage);
+        $end_time = microtime(true);
+        
+        echo '初期化処理時間:'.($end_time-$start_time).'秒 \n';
 
         return true;
     }
@@ -245,16 +250,16 @@ class ImageAnalizer
         $save_dir = '\\images\\';
         $save_filename = date('YmdHis');
         $save_basename = $save_filename. '.'. $ext;
-        $this->save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
+        $this->save_path = $_SERVER['DOCUMENT_ROOT']. $save_dir. $save_basename;
 
         while (file_exists($this->save_path))
         {
             $save_filename .= mt_rand(0, 9);
             $save_basename = $save_filename. '.'. $ext;
-            $this->save_path = $_SERVER["DOCUMENT_ROOT"]. $save_dir. $save_basename;
+            $this->save_path = $_SERVER['DOCUMENT_ROOT']. $save_dir. $save_basename;
         }
         
-        if(!move_uploaded_file($_FILES["upfile"]["tmp_name"],$this->save_path))
+        if(!move_uploaded_file($_FILES['upfile']['tmp_name'],$this->save_path))
         {
             return false;
         }
@@ -271,15 +276,15 @@ class ImageAnalizer
         switch($mime_type)
         {
             case IMAGETYPE_JPEG:
-                return "jpg";
+                return 'jpg';
             case IMAGETYPE_PNG:
-                return "png";
+                return 'png';
             case IMAGETYPE_GIF:
-                return "gif";
+                return 'gif';
             case IMAGETYPE_BMP:
-                return "bmp";
+                return 'bmp';
             default:
-                return "other";
+                return 'other';
         }
     }
 
@@ -330,9 +335,9 @@ class ImageAnalizer
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
-                $sumrgb->setR($sumrgb->getR()+$colors["red"]);
-                $sumrgb->setG($sumrgb->getG()+$colors["green"]);
-                $sumrgb->setB($sumrgb->getB()+$colors["blue"]);
+                $sumrgb->setR($sumrgb->getR()+$colors['red']);
+                $sumrgb->setG($sumrgb->getG()+$colors['green']);
+                $sumrgb->setB($sumrgb->getB()+$colors['blue']);
             }
         }
         return $sumrgb;
@@ -345,32 +350,30 @@ class ImageAnalizer
         $divedheight = floor($height/$divheight);
 
         $rgbarray = array();
-        for($y = 0; $y < $divheight; $y++)
+        for($y = 0; $y < $divheight; ++$y)
         {
             $rgbarray[] = array();
             $row = $y/$space;
-            for($x = 0; $x < $divwidth; $x++)
+            for($x = 0; $x < $divwidth; ++$x)
             {
                 $rgbarray[$row][] = new RGB();
             }
         }
 
-        for($y = 0; $y < $divheight; $y++)
+        for($y = 0; $y < $divheight; ++$y)
         {
-            for($x = 0; $x < $divwidth; $x++)
+            for($x = 0; $x < $divwidth; ++$x)
             {
                 $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight,$space);
-                $rgbarray[$y][$x]->setR($rgb->getR());
-                $rgbarray[$y][$x]->setG($rgb->getG());
-                $rgbarray[$y][$x]->setB($rgb->getB());
+                $rgbarray[$y][$x]->setRGB($rgb->getRGB());
             }
         }
 
         $allpixels = ($divedheight*$divedwidth)/pow($space,2);
 
-        for($y = 0; $y < $divheight; $y++)
+        for($y = 0; $y < $divheight; ++$y)
         {
-            for($x = 0; $x < $divwidth; $x++)
+            for($x = 0; $x < $divwidth; ++$x)
             {
                 $rgbarray[$x][$y]->setR(floor($rgbarray[$x][$y]->getR()/$allpixels));
                 $rgbarray[$x][$y]->setG(floor($rgbarray[$x][$y]->getG()/$allpixels));
@@ -384,17 +387,18 @@ class ImageAnalizer
     private function getFlickerImages($per_page,$page)
     {
         $image = array();
-        $Flickr_apikey = "600dfca58e06413caa4125ce28da02b7";
-        $Flickr_getRecent = "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=".$Flickr_apikey."&extras=url_s&per_page=".$per_page."&page=".$page."&format=php_serial";
+        $Flickr_apikey = '600dfca58e06413caa4125ce28da02b7';
+        $Flickr_getRecent = 'https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key='.$Flickr_apikey.'&extras=url_s&per_page='.$per_page.'&page='.$page.'&format=php_serial';
         $result = unserialize(file_get_contents($Flickr_getRecent));
         
-        foreach($result["photos"]["photo"] as $k => $photo){
-            if(isset($photo["url_s"])){
-                $url   = $photo["url_s"];
-                $width = $photo["width_s"]-1;
-                $height= $photo["height_s"]-1;
+        $ext = 'image/jpeg';
 
-                $ext = "image/jpeg";
+        foreach($result['photos']['photo'] as $k => $photo){
+            if(isset($photo['url_s'])){
+                $url   = $photo['url_s'];
+                $width = $photo['width_s']-1;
+                $height= $photo['height_s']-1;
+
                 $image[] = new FlickerImage($width,$height,$ext,$url);
             }
         }
@@ -416,13 +420,13 @@ class ImageAnalizer
                 
                 if($this->compareImage($src,$average[0][0]) < $margin)
                 {
-                    echo "diff = " .$this->compareImage($src,$average[0][0])."<br>\n";
+                    echo 'diff = ' .$this->compareImage($src,$average[0][0]).'\n';
                     var_dump($average[0][0]->getRGB());
-                    $this->page++;
+                    ++$this->page;
                     return $flickerimage;
                 }
             }
-            $this->page++;
+            ++$this->page;
         }
     }
 
