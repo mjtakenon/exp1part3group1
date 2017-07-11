@@ -285,5 +285,55 @@ class ImageAnalizer
         }
         return $rgbarray;
     }
+    private function getFlickerImages($per_page,$page)
+    {
+        $image = array();
+        $Flickr_apikey = "600dfca58e06413caa4125ce28da02b7";
+        $Flickr_getRecent = "https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=".$Flickr_apikey."&extras=url_s&per_page=".$per_page."&page=".$page."&format=php_serial";
+        $result = unserialize(file_get_contents($Flickr_getRecent));
+
+        foreach($result["photos"]["photo"] as $k => $photo){
+            if(isset($photo["url_s"])){
+                $url   = $photo["url_s"];
+                $width = $photo["width_s"]-1;
+                $height= $photo["height_s"]-1;
+
+                $ext = "image/jpeg";
+                $image[] = new FlickerImage($width,$height,$ext,$url);
+            }
+        }
+        return $image;
+    }
+
+    private function getSimilarImage($src,$margin)
+    {
+        $num = 500;
+        for(;;)
+        {
+            $flickerimages = $this->getFlickerImages($num,$this->page);
+
+            foreach($flickerimages as $flickerimage)
+            {
+                $image = $this->createImageByUrl($flickerimage->getUrl());
+                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1);
+
+                if($this->compareImage($src,$average[0][0]) < $margin)
+                {
+                    echo "diff = " .$this->compareImage($src,$average[0][0])."<br>\n";
+                    var_dump($average[0][0]->getRGB());
+                    $this->page++;
+                    return $flickerimage;
+                }
+            }
+            $this->page++;
+        }
+    }
+
+    private function compareImage($src1,$src2)
+    {
+        return abs(pow($src1->getR()-$src2->getR(),2))
+              +abs(pow($src1->getG()-$src2->getG(),2))
+              +abs(pow($src1->getB()-$src2->getB(),2));
+    }
 }
 ?>
