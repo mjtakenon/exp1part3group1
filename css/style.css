@@ -1,0 +1,30 @@
+body > h1, h2 {
+  text-align: center;
+}
+
+form {
+  text-align: center;
+}
+
+table {
+  margin: 0 auto;
+}
+
+td {
+  margin: 0;
+  border: 1px #fff solid;
+  width: 100px;
+  height: 100px;
+}
+
+td.empty-cell {
+  background: #777;
+}
+
+td:not(.empty-cell) {
+  cursor: pointer;
+}
+
+.modal-body img {
+  width: 100%;
+}
