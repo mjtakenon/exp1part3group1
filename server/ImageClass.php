@@ -20,6 +20,15 @@ class BaseImage
     public function getExt(){
         return $this->ext;
     }
+    public function setWidth($w){
+        $this->width = $w;
+    }
+    public function setHeight($h){
+        $this->height = $h;
+    }
+    public function setExt($e){
+        $this->ext = $e;
+    }
 }
 /*RGBのためのクラス*/
 class RGB
@@ -38,16 +47,10 @@ class RGB
     public function getB(){
         return $this->RGBColor['Blue'];
     }
-    /*public function setRGB($R,$G,$B){
+    public function setRGB($R,$G,$B){
         $this->RGBColor['Red'] = $R;
         $this->RGBColor['Green'] = $G;
         $this->RGBColor['Blue'] = $B;
-    }*/
-
-    public function setRGB($rgb){
-        $this->RGBColor['Red'] = $rgb->getR();
-        $this->RGBColor['Green'] = $rgb->getG();
-        $this->RGBColor['Blue'] = $rgb->getB();
     }
     public function setR($R){
         $this->RGBColor['Red'] = $R;
@@ -64,15 +67,12 @@ class RGB
 class ReciveImage extends BaseImage
 {
     private $division = array('X' => 0,'Y' => 0);
-    //private $size = array('width' => 0, 'height' => 0);
-    //private $ext = "";
     private $pixColor = null;
     function __construct($w,$h,$e,$dimg){
         parent::__construct($w,$h,$e);
-        echo count($dimg[0]).",".count($dimg);
+        //echo count($dimg[0]).",".count($dimg);
         $this->setDivision(count($dimg[0]),count($dimg));
-        //$this->setSize($w,$h);
-        //$this->setExt($e);
+
         //for ($i=0; $i < $dy; $i++) {
 
             $this->pixColor = $dimg;
@@ -84,11 +84,6 @@ class ReciveImage extends BaseImage
     {
         $this->division['X'] = $x;
         $this->division['Y'] = $y;
-    }
-    public function setSize($w,$h)
-    {
-        $this->size['width'] = $w;
-        $this->size['height'] = $h;
     }
     public function setExt($e)
     {
@@ -102,14 +97,6 @@ class ReciveImage extends BaseImage
     public function getDivision()
     {
         return $this->division;
-    }
-    public function getSize()
-    {
-        return $this->size['width'];
-    }
-    public function getExt()
-    {
-        return $this->ext;
     }
     public function getPixcolor()
     {
@@ -131,22 +118,54 @@ class SendImage extends BaseImage
         $this->division['Y'] = $y;
     }
 }
+class FlickerImage extends BaseImage
+{
+    private $url;
+
+    function __construct($w,$h,$e,$u)
+    {
+        parent::__construct($w,$h,$e);
+        $this->url = $u;
+    }
+    function getUrl()
+    {
+        return $this->url;
+    }
+    function setUrl($u)
+    {
+        $this->url = $u;
+    }
+}
 class ImageAnalizer
 {
     private $m_ReceiveImage = null;
     private $save_path = "";
+    private $page = 1;
     public function __construct($divwidth,$divheight)
     {
         if(!$this->initalize($divwidth,$divheight))
         {
-            //画像処理
-            //flickerから取ってきたりする
+            echo "画像の初期化に失敗しました。<br>\n";
         }
         else
         {
-            //エラー処理
-        }
+            $num = 2;
+            foreach($this->m_ReceiveImage->getPixcolor() as $height)
+            {
+                foreach($height as $image)
+                {
+                    //var_dump($width->getRGB());
+                    //echo "<br>\n";
+                    $margin = 500;
+                    var_dump($image->getRGB());
+                    echo "<br>\n";
+                    $flickrimage = $this->getSimilarImage($image,$margin);
+                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"><br>\n';
+                    //echo $flickrimage->getUrl()."<br>\n";
 
+                }
+            }
+        }
     }
     private function initalize($divwidth,$divheight)
     {
@@ -154,7 +173,7 @@ class ImageAnalizer
         $ext = $this->isImageFile($mime_type);
         if($ext === "other")
         {
-            echo "画像ファイルを選択してください。<br>";
+            echo "画像ファイルを選択してください。<br>\n";
             return false;
         }
         if(!$this->saveImg($ext))
@@ -162,24 +181,26 @@ class ImageAnalizer
             echo "画像の保存ができませんでした。<br>path=".$this->save_path."<br>\n";
             return false;
         }
-        echo "path=".$this->save_path."<br>";
-        echo "width=".$width."<br>";
-        echo "height=".$height."<br>";
-        echo "ext=".$ext."<br>";
-        echo "divwidth=".$divwidth."<br>";
-        echo "divheight=".$divheight."<br>";
-        echo "divedwidth=".floor($width/$divwidth)."<br>";
-        echo "divedheight=".floor($height/$divheight)."<br>";
-        $image = $this->createImage($mime_type);
+        echo "path=".$this->save_path."<br>\n";
+        echo "width=".$width."<br>\n";
+        echo "height=".$height."<br>\n";
+        echo "ext=".$ext."<br>\n";
+        echo "divwidth=".$divwidth."<br>\n";
+        echo "divheight=".$divheight."<br>\n";
+        echo "divedwidth=".floor($width/$divwidth)."<br>\n";
+        echo "divedheight=".floor($height/$divheight)."<br>\n";
+        $image = $this->createImageBySavepath($mime_type);
         if(!$image)
         {
-            echo "保存した画像を開けませんでした。<br>";
+            echo "保存した画像を開けませんでした。<br>\n";
             return false;
         }
 
         $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight);
         $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
-        print_r($this->m_ReceiveImage);
+
+        //print_r($this->m_ReceiveImage);
+        return true;
     }
     private function saveImg($ext)
     {
@@ -218,10 +239,10 @@ class ImageAnalizer
             case IMAGETYPE_BMP:
                 return "bmp";
             default:
-                return"other";
+                return "other";
         }
     }
-    private function createImage($mime_type)
+    private function createImageBySavepath($mime_type)
     {
         switch($mime_type)
         {
@@ -233,6 +254,22 @@ class ImageAnalizer
                 return imagecreatefromgif($this->save_path);
             case IMAGETYPE_BMP:
                 return imagecreatefrombmp($this->save_path);
+        }
+    }
+    private function createImageByUrl($url)
+    {
+        list($width,$height,$mime_type,$attr) = getimagesize($url);
+
+        switch($mime_type)
+        {
+            case IMAGETYPE_JPEG:
+                return imagecreatefromjpeg($url);
+            case IMAGETYPE_PNG:
+                return imagecreatefrompng($url);
+            case IMAGETYPE_GIF:
+                return imagecreatefromgif($url);
+            case IMAGETYPE_BMP:
+                return imagecreatefrombmp($url);
         }
     }
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
@@ -297,7 +334,6 @@ class ImageAnalizer
                 $url   = $photo["url_s"];
                 $width = $photo["width_s"]-1;
                 $height= $photo["height_s"]-1;
-
                 $ext = "image/jpeg";
                 $image[] = new FlickerImage($width,$height,$ext,$url);
             }
@@ -311,7 +347,6 @@ class ImageAnalizer
         for(;;)
         {
             $flickerimages = $this->getFlickerImages($num,$this->page);
-
             foreach($flickerimages as $flickerimage)
             {
                 $image = $this->createImageByUrl($flickerimage->getUrl());
@@ -328,7 +363,6 @@ class ImageAnalizer
             $this->page++;
         }
     }
-
     private function compareImage($src1,$src2)
     {
         return abs(pow($src1->getR()-$src2->getR(),2))
