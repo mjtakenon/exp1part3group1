@@ -426,6 +426,7 @@ class ImageAnalizer
         }
     }
 
+    //画像の比較 |R^2|+|G^2|+|B^2|の値を返す
     private function compareImage($src1,$src2)
     {
         return abs(pow($src1->getR()-$src2->getR(),2))
