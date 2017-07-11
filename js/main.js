@@ -12,22 +12,23 @@ function init() {
   }
   $('#mosaic > tbody').html(s);
 
-  for (let i = 0; i < height; i++)
-    for (let j = 0; j < width; j++)
-      $('.y' + i + ' > .x' + j).addClass('empty-cell', 3000, 'linear');
+  let delayTime = 0;
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+      $('.y' + i + ' > .x' + j).delay(delayTime).addClass('empty-cell', 3000, 'linear');
+      delayTime += 150;
+    }
+  }
 }
 
 function setImage(x, y, url) {
   const e = $('.y' + y + ' > .x' + x);
   e.removeClass('empty-cell', 1500, 'linear', function () { // 消えるアニメーション
-    // 追加する部分のCSS
-    e.css({
+    e.css({ // 追加する部分のCSS
       background: 'url(' + url + ')',
       'background-size': 'cover',
       opacity: 0
-    });
-    // 追加部分のアニメーション
-    e.animate({
+    }).animate({ // 追加アニメーションの実行
       opacity: '1'
     }, 1500);
   });
