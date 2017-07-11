@@ -410,6 +410,7 @@ class ImageAnalizer
     private function getSimilarImage($src,$margin)
     {
         $num = 500;
+        $count = 1;
         for(;;)
         {
             $flickerimages = $this->getFlickerImages($num,$this->page);
@@ -422,9 +423,14 @@ class ImageAnalizer
                 if($this->compareImage($src,$average[0][0]) < $margin)
                 {
                     echo "diff = " .$this->compareImage($src,$average[0][0])."\n";
+                    echo "count = " .$count."\n";
                     var_dump($average[0][0]->getRGB());
                     ++$this->page;
                     return $flickerimage;
+                }
+                else
+                {
+                    $count ++;
                 }
             }
             ++$this->page;
