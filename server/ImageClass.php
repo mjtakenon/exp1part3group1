@@ -434,5 +434,4 @@ class ImageAnalizer
               +abs(pow($src1->getB()-$src2->getB(),2));
     }
 }
-
 ?>

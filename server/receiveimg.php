@@ -7,6 +7,7 @@
 	<body>
 		<h2>結果だっていってるだろぉぉぉぉぉん！？</h2>
 		<?php
+			$start_time = microtime(true);
 			require('ImageClass.php');
 			if(is_uploaded_file($_FILES["upfile"]["tmp_name"]))
 			{
@@ -14,8 +15,10 @@
 			}
 			else
 			{
-				echo "ファイルが選択されていません。";
+				echo "ファイルが選択されていません。<br>\n";
 			}
+			$end_time = microtime(true);
+			echo "総処理時間:".($end_time-$start_time)."秒<br>\n";
 		?>
 	</body>
 
