@@ -175,7 +175,7 @@ class ImageAnalizer
                     $margin = 500;
                     var_dump($image->getRGB());
                     $flickrimage = $this->getSimilarImage($image,$margin);
-                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200">';
+                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"/>';
                     //echo $flickrimage->getUrl().'\n';
                     $end_time = microtime(true);
 		
@@ -183,6 +183,7 @@ class ImageAnalizer
                 }
             }   
         }
+
     }
 
     //初期化 成功するとtrue,失敗するとfalseを返す
@@ -198,35 +199,35 @@ class ImageAnalizer
 
         if($ext === 'other')
         {
-            echo '画像ファイルを選択してください。\n';
+            echo "画像ファイルを選択してください。\n";
             return false;
         }
 
         //画像をimages/に保存
         if(!$this->saveImg($ext))
         {
-            echo '画像の保存ができませんでした。path='.$this->save_path.'\n';
+            echo "画像の保存ができませんでした。path=".$this->save_path."\n";
             return false;
         }
 
         //クライアントから送られた情報の表示
-        echo 'path='.$this->save_path.'\n';
-        echo 'width='.$width.'\n';
-        echo 'height='.$height.'\n';
-        echo 'ext='.$ext.'\n';
+        echo "path=".$this->save_path."\n";
+        echo "width=".$width."\n";
+        echo "height=".$height."\n";
+        echo "ext=".$ext."\n";
 
-        echo 'divwidth='.$divwidth.'\n';
-        echo 'divheight='.$divheight.'\n';
+        echo "divwidth=".$divwidth."\n";
+        echo "divheight=".$divheight."\n";
 
-        echo 'divedwidth='.floor($width/$divwidth).'\n';
-        echo 'divedheight='.floor($height/$divheight).'\n';
+        echo "divedwidth=".floor($width/$divwidth)."\n";
+        echo "divedheight=".floor($height/$divheight)."\n";
 
         //保存したローカルデータから画像の作成
         $image = $this->createImageBySavepath($mime_type);
 
         if(!$image)
         {
-            echo '保存した画像を開けませんでした。\n';
+            echo "保存した画像を開けませんでした。\n";
             return false;
         }
         
@@ -239,7 +240,10 @@ class ImageAnalizer
         //print_r($this->m_ReceiveImage);
         $end_time = microtime(true);
         
-        echo '初期化処理時間:'.($end_time-$start_time).'秒 \n';
+        header ('Content-Type: image/jpeg');
+        imagejpeg($image);
+        
+        echo "初期化処理時間:".($end_time-$start_time)."秒 \n";
 
         return true;
     }
@@ -420,7 +424,7 @@ class ImageAnalizer
                 
                 if($this->compareImage($src,$average[0][0]) < $margin)
                 {
-                    echo 'diff = ' .$this->compareImage($src,$average[0][0]).'\n';
+                    echo "diff = " .$this->compareImage($src,$average[0][0])."\n";
                     var_dump($average[0][0]->getRGB());
                     ++$this->page;
                     return $flickerimage;
