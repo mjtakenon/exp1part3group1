@@ -240,9 +240,6 @@ class ImageAnalizer
         //print_r($this->m_ReceiveImage);
         $end_time = microtime(true);
         
-        header ('Content-Type: image/jpeg');
-        imagejpeg($image);
-        
         echo "初期化処理時間:".($end_time-$start_time)."秒 \n";
 
         return true;
