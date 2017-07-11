@@ -185,7 +185,7 @@ class ImageAnalizer
         }
     }
 
-    //初期化 成功するとtrue,失敗するとfalse
+    //初期化 成功するとtrue,失敗するとfalseを返す
     private function initalize($divwidth,$divheight)
     {
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
