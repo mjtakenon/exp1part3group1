@@ -128,7 +128,7 @@ class SendImage extends BaseImage
     }
 }
 
-class FlickerImage extends BaseImage
+class flickrImage extends BaseImage
 {
     private $url;
     
@@ -163,23 +163,15 @@ class ImageAnalizer
         }
         else
         {
-            $num = 2;
+            $margin = 500;
 
-            foreach($this->m_ReceiveImage->getPixcolor() as $row)
+            $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
+
+            foreach($flickrimages as $row)
             {
                 foreach($row as $image)
                 {
-                    $start_time = microtime(true);
-                    //var_dump($width->getRGB());
-                    //echo '\n';
-                    $margin = 500;
-                    //var_dump($image->getRGB());
-                    $flickrimage = $this->getSimilarImage($image,$margin);
-                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"/>'."\n";
-                    //echo $flickrimage->getUrl().'\n';
-                    $end_time = microtime(true);
-		
-                    echo "画像取得時間:".($end_time-$start_time)."秒\n";
+                    echo '<img src="'.$image->getUrl().'" width="200" height="200"/>'."\n";
                 }
             }
         }
@@ -388,11 +380,11 @@ class ImageAnalizer
     }
 
     //flickrのAPIを叩いてFlickrImage[]を返す
-    private function getFlickerImages($per_page,$page)
+    private function getflickrImages($per_page,$page)
     {
         $image = array();
         $Flickr_apikey = '600dfca58e06413caa4125ce28da02b7';
-        $Flickr_getRecent = 'https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key='.$Flickr_apikey.'&extras=url_s&per_page='.$per_page.'&page='.$page.'&format=php_serial';
+        $Flickr_getRecent = 'https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key='.$Flickr_apikey.'&extras=url_sq&per_page='.$per_page.'&page='.$page.'&format=php_serial';
         $result = unserialize(file_get_contents($Flickr_getRecent));
         
         $ext = 'image/jpeg';
@@ -402,7 +394,7 @@ class ImageAnalizer
                 $url   = $photo['url_s'];
                 $width = $photo['width_s']-1;
                 $height= $photo['height_s']-1;
-                $image[] = new FlickerImage($width,$height,$ext,$url);
+                $image[] = new flickrImage($width,$height,$ext,$url);
             }
         }
         return $image;
@@ -413,37 +405,69 @@ class ImageAnalizer
     {
         $num = 500;
         $count = 1;
+
+        $flickrarray = array();
+        for($y = 0; $y < $src->getDivision()['y']; ++$y)
+        {
+            $flickrarray[] = array();
+            
+            for($x = 0; $x < $src->getDivision()['x']; ++$x)
+            {
+                $flickrarray[$y][] = null;
+            }
+        }
+
+        //ページ最後まで探索してもなかったら繰り返す
         for(;;)
         {
-            $flickerimages = $this->getFlickerImages($num,$this->page);
+            //Flickrの画像arrayをnum個とpageを指定して取得してくる
+            $flickrimages = $this->getflickrImages($num,$this->page);
 
-            foreach($flickerimages as $flickerimage)
+            //array内の画像を走査
+            foreach($flickrimages as $flickrimage)
             {
-                $start_time = microtime(true);
-
-                $image = $this->createImageByJpegUrl($flickerimage->getUrl());
+                //URLからリソースに変換
+                $image = $this->createImageByJpegUrl($flickrimage->getUrl());
                 
-                $end_time = microtime(true);
-                echo "createtime:".($end_time-$start_time)."秒 \n";
-                $start_time = microtime(true);
-
-                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1,4);
+                //リソースの平均が措置を出す
+                $average = $this->getAverageRGB($image,$flickrimage->getWidth(),$flickrimage->getHeight(),1,1,5);
                 
-                $end_time = microtime(true);
-                echo "averagetime:".($end_time-$start_time)."秒 \n";
+                //クライアントから送られた画像の分割部と照合してく
+                $x = 0;
+                foreach($src->getPixcolor() as $row)
+                {
+                    $y = 0;
+                    foreach($row as $srcimg)
+                    {
+                        //照合が終わってなく、比較結果がしきい値以下だったら
+                        if($flickrarray[$x][$y] === null && $this->compareImage($srcimg,$average[0][0]) < $margin)
+                        {
+                            echo "diff = " .$this->compareImage($src,$average[0][0])."\n";
+                            echo "count = " .$count."\n";
 
-                if($this->compareImage($src,$average[0][0]) < $margin)
-                {
-                    echo "diff = " .$this->compareImage($src,$average[0][0])."\n";
-                    echo "count = " .$count."\n";
-                    //var_dump($average[0][0]->getRGB());
-                    ++$this->page;
-                    return $flickerimage;
+                            $flickrarray[$x][$y] = $flickrimage;
+
+                            for($i = 0; $i < count($src); ++$i)
+                            {
+                                if(array_search(null,$flickrarray[$i]))
+                                {
+                                    break;
+                                }
+                                else if(($i-1) == count($src))
+                                {
+                                    return $flickrarray;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $count ++;
+                        }
+                        ++$y;
+                    }
+                    ++$x;
                 }
-                else
-                {
-                    $count ++;
-                }
+                
             }
             ++$this->page;
         }
