@@ -1,3 +1,4 @@
+const ws = new WebSocket('ws://' + location.host + ':9000');
 const width  = 4;
 const height = 4;
 
@@ -18,6 +19,20 @@ function init() {
       $('.y' + i + ' > .x' + j).delay(delayTime).addClass('empty-cell', 3000, 'linear');
       delayTime += 150;
     }
+  }
+
+  ws.onopen = onOpen;
+}
+
+function onOpen() {
+  console.log('Connection established.');
+  ws.onmessage = onMessage;
+}
+
+function onMessage(event) {
+  if (event && event.data) {
+    const d = JSON.parse(event.data);
+    setImage(d.x, d.y, d.url);
   }
 }
 
@@ -45,6 +60,10 @@ debug();
 
 $('#file_input').change(function () {
   $('#dummy_file').val($(this).val().replace('C:\\fakepath\\', ''));
+});
+
+$('#submit_btn').on('click', function () {
+  ws.send($('#file_input').get(0).files);
 });
 
 $('#mosaic > tbody').on('click', 'tr > td:not(.empty-cell)', function () {
