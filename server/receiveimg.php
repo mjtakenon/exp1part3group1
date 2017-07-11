@@ -6,22 +6,23 @@
 	</head>
 	<body>
 		<h2>結果だっていってるだろぉぉぉぉぉん！？</h2>
-		<pre>
-		<?php
-			$start_time = microtime(true);
-			require('ImageClass.php');
-			if(is_uploaded_file($_FILES["upfile"]["tmp_name"]))
-			{
-				$analizer = new ImageAnalizer(3,3);
-			}
-			else
-			{
-				echo "ファイルが選択されていません。\n";
-			}
-			$end_time = microtime(true);
-			echo "総処理時間:".($end_time-$start_time)."秒\n";
-		?>
-		</pre>
+			<pre>
+			<?php
+				$start_time = microtime(true);
+				require('ImageClass.php');
+				if(is_uploaded_file($_FILES["upfile"]["tmp_name"]))
+				{
+					$analizer = new ImageAnalizer(4,4);
+				}
+				else
+				{
+					echo "ファイルが選択されていません。\n";
+				}
+				$end_time = microtime(true);
+				echo "総処理時間:".($end_time-$start_time)."秒\n";
+			?>
+			
+			</pre>
 	</body>
 
 </html>

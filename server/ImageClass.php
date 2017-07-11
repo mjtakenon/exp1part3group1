@@ -166,14 +166,16 @@ class ImageAnalizer
             $margin = 500;
 
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
-            echo "returned\n";
+            echo '<div style="float:left;">';
             foreach($flickrimages as $row)
             {
                 foreach($row as $image)
                 {
-                    echo '<img src="'.$image->getUrl().'" width="200" height="200"/>'."\n";
+                    echo '<img src="'.$image->getUrl().'" width="25" height="18"/>'."\n";
                 }
+                echo '<br>';
             }
+			echo '</div>';
         }
     }
 
