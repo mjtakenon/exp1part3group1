@@ -166,16 +166,18 @@ class ImageAnalizer
             $margin = 500;
 
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
-            echo '<div style="float:left;">';
+            echo "returnd\n";
+            echo '<table border="0" cellspacing="0" cellpadding="0">'."\n";
             foreach($flickrimages as $row)
             {
+                echo '<tr>';
                 foreach($row as $image)
                 {
-                    echo '<img src="'.$image->getUrl().'" width="25" height="18"/>'."\n";
+                    echo '<td><img src="'.$image->getUrl().'" width="25" height="18"/></td>'."\n";
                 }
-                echo '<br>';
+                echo "</tr>\n";
             }
-			echo '</div>';
+			echo "</table>\n";
         }
     }
 
@@ -444,7 +446,7 @@ class ImageAnalizer
                         //照合が終わってなく、比較結果がしきい値以下だったら
                         if($flickrarray[$x][$y] === null && $this->compareImage($srcimg,$average[0][0]) < $margin)
                         {
-                            echo "diff = " .$this->compareImage($srcimg,$average[0][0])."\n";
+                            echo "diff = " .$this->compareImage($srcimg,$average[0][0]).",";
                             echo "count = " .$count."\n";
 
                             $flickrarray[$x][$y] = $flickrimage;
