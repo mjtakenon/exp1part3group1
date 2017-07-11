@@ -163,17 +163,21 @@ class ImageAnalizer
         }
         else
         {
-            $margin = 500;
+            $margin = 1000;
 
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
+            
+            $width = $this->m_ReceiveImage->getWidth()/$this->m_ReceiveImage->getDivision()['X'];
+            $height = $this->m_ReceiveImage->getHeight()/$this->m_ReceiveImage->getDivision()['Y'];
             echo "returnd\n";
-            echo '<table border="0" cellspacing="0" cellpadding="0">'."\n";
+            echo '<table border="0" cellspacing="0" cellpadding="0" >'."\n";
+            
             foreach($flickrimages as $row)
             {
                 echo '<tr>';
                 foreach($row as $image)
                 {
-                    echo '<td><img src="'.$image->getUrl().'" width="25" height="18"/></td>'."\n";
+                    echo '<td><img src="'.$image->getUrl().'" width="'.$width.'" height="'.$height.'"/></td>'."\n";
                 }
                 echo "</tr>\n";
             }
@@ -430,6 +434,12 @@ class ImageAnalizer
             //array内の画像を走査
             foreach($flickrimages as $flickrimage)
             {
+                $url = $flickrimage->getUrl();
+                if(!isset($url))
+                {
+                    continue;
+                }
+
                 //URLからリソースに変換
                 $image = $this->createImageByJpegUrl($flickrimage->getUrl());
                 
@@ -485,9 +495,9 @@ class ImageAnalizer
     //画像の比較 |R^2|+|G^2|+|B^2|の値を返す
     private function compareImage($src1,$src2)
     {
-        return abs(pow($src1->getR()-$src2->getR(),2))
-              +abs(pow($src1->getG()-$src2->getG(),2))
-              +abs(pow($src1->getB()-$src2->getB(),2));
+        return pow($src1->getR()-$src2->getR(),2)
+              +pow($src1->getG()-$src2->getG(),2)
+              +pow($src1->getB()-$src2->getB(),2);
     }
 }
 ?>
