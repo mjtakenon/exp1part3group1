@@ -12,3 +12,11 @@ td {
 td.empty-cell {
   background: #777;
 }
+
+td:not(.empty-cell) {
+  cursor: pointer;
+}
+
+.modal-body img {
+  width: 100%;
+}

@@ -6,7 +6,7 @@ function init() {
   for (let i = 0; i < height; i++) {
     s += '<tr class="y' + i + '">'
     for (let j = 0; j < width; j++) {
-      s += '<td class="x' + j + '"></td>';
+      s += '<td class="x' + j + '"><div style="display: none;"></div></td>';
     }
     s += '</tr>'
   }
@@ -24,6 +24,7 @@ function init() {
 function setImage(x, y, url) {
   const e = $('.y' + y + ' > .x' + x);
   e.removeClass('empty-cell', 1500, 'linear', function () { // 消えるアニメーション
+    e.children('div').html(url);
     e.css({ // 追加する部分のCSS
       background: 'url(' + url + ')',
       'background-size': 'cover',
@@ -42,6 +43,12 @@ function debug() {
 init();
 debug();
 
-$("#file_input").change(function () {
-  $("#dummy_file").val($(this).val().replace("C:\\fakepath\\", ""));
+$('#file_input').change(function () {
+  $('#dummy_file').val($(this).val().replace('C:\\fakepath\\', ''));
+});
+
+$('#mosaic > tbody').on('click', 'tr > td:not(.empty-cell)', function () {
+  $('#previewModal .modal-body > img').attr('src', $(this).children('div').html());
+  $('#previewModal .modal-body > a').attr('href', $(this).children('div').html());
+  $('#previewModal').modal();
 });
