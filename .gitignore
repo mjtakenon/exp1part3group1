@@ -1,5 +1,2 @@
-images/*.jpg
-images/*.png
-images/*.gif
-images/*.bmp
+images/
 .vscode/

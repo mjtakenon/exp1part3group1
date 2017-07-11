@@ -222,7 +222,7 @@ class ImageAnalizer
             return false;
         }
         
-        $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight);
+        $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight,0);
 
         $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
         
@@ -288,6 +288,7 @@ class ImageAnalizer
                 return imagecreatefrombmp($this->save_path);
         }
     }
+
     private function createImageByUrl($url)
     {
         list($width,$height,$mime_type,$attr) = getimagesize($url);
@@ -305,13 +306,13 @@ class ImageAnalizer
         }
     }
 
-    private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize)
+    private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize,$space)
     {
         $sumrgb = new RGB();
 
-        for($y = 0; $y < $ysize; $y++)
+        for($y = 0; $y < $ysize; $y+=$space)
         {
-            for($x = 0; $x < $xsize; $x++)
+            for($x = 0; $x < $xsize; $x+=$space)
             {
                 $rgb = imagecolorat($image,$xpos+$x,$ypos+$y);
                 $colors = imagecolorsforindex($image,$rgb);
@@ -323,18 +324,21 @@ class ImageAnalizer
         return $sumrgb;
     }
 
-    private function getAverageRGB($image,$width,$height,$divwidth,$divheight)
+    private function getAverageRGB($image,$width,$height,$divwidth,$divheight,$space)
     {
         $divedwidth = floor($width/$divwidth);
         $divedheight = floor($height/$divheight);
 
+        $space++;
+
         $rgbarray = array();
         for($y = 0; $y < $divheight; $y++)
         {
-            $rgbarray[$y] = array();
+            $rgbarray[] = array();
+            $row = $y/$space;
             for($x = 0; $x < $divwidth; $x++)
             {
-                $rgbarray[$y][$x] = new RGB();
+                $rgbarray[$row][] = new RGB();
             }
         }
 
@@ -342,20 +346,22 @@ class ImageAnalizer
         {
             for($x = 0; $x < $divwidth; $x++)
             {
-                $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight);
+                $rgb = $this->getSumRGB($image,$x*$divedwidth,$y*$divedheight,$divedwidth,$divedheight,$space);
                 $rgbarray[$y][$x]->setR($rgb->getR());
                 $rgbarray[$y][$x]->setG($rgb->getG());
                 $rgbarray[$y][$x]->setB($rgb->getB());
             }
         }
 
+        $allpixels = ($divedheight*$divedwidth)/pow($space,2);
+
         for($y = 0; $y < $divheight; $y++)
         {
             for($x = 0; $x < $divwidth; $x++)
             {
-                $rgbarray[$x][$y]->setR(floor($rgbarray[$x][$y]->getR()/($divedheight*$divedwidth)));
-                $rgbarray[$x][$y]->setG(floor($rgbarray[$x][$y]->getG()/($divedheight*$divedwidth)));
-                $rgbarray[$x][$y]->setB(floor($rgbarray[$x][$y]->getB()/($divedheight*$divedwidth)));
+                $rgbarray[$x][$y]->setR(floor($rgbarray[$x][$y]->getR()/$allpixels));
+                $rgbarray[$x][$y]->setG(floor($rgbarray[$x][$y]->getG()/$allpixels));
+                $rgbarray[$x][$y]->setB(floor($rgbarray[$x][$y]->getB()/$allpixels));
             }
         }
         return $rgbarray;
@@ -391,7 +397,7 @@ class ImageAnalizer
             foreach($flickerimages as $flickerimage)
             {
                 $image = $this->createImageByUrl($flickerimage->getUrl());
-                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1);
+                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1,1);
                 
                 if($this->compareImage($src,$average[0][0]) < $margin)
                 {
