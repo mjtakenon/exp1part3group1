@@ -175,7 +175,7 @@ class ImageAnalizer
                     $margin = 500;
                     var_dump($image->getRGB());
                     $flickrimage = $this->getSimilarImage($image,$margin);
-                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"/>';
+                    echo '<img src="'.$flickrimage->getUrl().'" width="200" height="200"/>\n';
                     //echo $flickrimage->getUrl().'\n';
                     $end_time = microtime(true);
 		
