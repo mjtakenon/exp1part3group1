@@ -188,8 +188,10 @@ class ImageAnalizer
     //初期化 成功するとtrue,失敗するとfalseを返す
     private function initalize($divwidth,$divheight)
     {
+        //画像データの取得
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES["upfile"]["tmp_name"]);
 
+        //画像ファイル種別の取得
         $ext = $this->isImageFile($mime_type);
 
         if($ext === "other")
@@ -198,12 +200,14 @@ class ImageAnalizer
             return false;
         }
 
+        //画像をimages/に保存
         if(!$this->saveImg($ext))
         {
             echo "画像の保存ができませんでした。<br>path=".$this->save_path."<br>\n";
             return false;
         }
 
+        //クライアントから送られた情報の表示
         echo "path=".$this->save_path."<br>\n";
         echo "width=".$width."<br>\n";
         echo "height=".$height."<br>\n";
@@ -215,6 +219,7 @@ class ImageAnalizer
         echo "divedwidth=".floor($width/$divwidth)."<br>\n";
         echo "divedheight=".floor($height/$divheight)."<br>\n";
 
+        //保存したローカルデータから画像の作成
         $image = $this->createImageBySavepath($mime_type);
 
         if(!$image)
@@ -223,8 +228,10 @@ class ImageAnalizer
             return false;
         }
         
-        $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight,0);
+        //平均値を出す
+        $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight,1);
 
+        //受信した画像のクラスを作成
         $this->m_ReceiveImage = new ReciveImage($width,$height,$ext,$averageRGB);
         
         //print_r($this->m_ReceiveImage);
@@ -232,6 +239,7 @@ class ImageAnalizer
         return true;
     }
 
+    //画像の保存 成功でtrue 失敗でfalse
     private function saveImg($ext)
     {
         $save_dir = '\\images\\';
@@ -257,6 +265,7 @@ class ImageAnalizer
         }
     }
     
+    //ファイル種別の判別 画像でないとotherを返す
     private function isImageFile($mime_type)
     {
         switch($mime_type)
@@ -274,6 +283,7 @@ class ImageAnalizer
         }
     }
 
+    //save_pathより画像データの作成
     private function createImageBySavepath($mime_type)
     {
 
@@ -290,6 +300,7 @@ class ImageAnalizer
         }
     }
 
+    //urlより画像データの作成
     private function createImageByUrl($url)
     {
         list($width,$height,$mime_type,$attr) = getimagesize($url);
@@ -306,7 +317,9 @@ class ImageAnalizer
                 return imagecreatefrombmp($url);
         }
     }
-
+    //urlより画像データの作成(jpgのみ)
+    
+    //画像の合計画素値をRGBで返す $xpos,$yposを左上座標に$xsize,$ysizeの大きさで,$space飛ばしで
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize,$space)
     {
         $sumrgb = new RGB();
@@ -325,12 +338,11 @@ class ImageAnalizer
         return $sumrgb;
     }
 
+    //画像の平均画素値をRGB[][]で返す $divwidth,$divheightに分割数、$spaceに間隔(間隔なしは0で)
     private function getAverageRGB($image,$width,$height,$divwidth,$divheight,$space)
     {
         $divedwidth = floor($width/$divwidth);
         $divedheight = floor($height/$divheight);
-
-        $space++;
 
         $rgbarray = array();
         for($y = 0; $y < $divheight; $y++)
@@ -368,6 +380,7 @@ class ImageAnalizer
         return $rgbarray;
     }
 
+    //flickrのAPIを叩いてFlickrImage[]を返す
     private function getFlickerImages($per_page,$page)
     {
         $image = array();
@@ -388,6 +401,7 @@ class ImageAnalizer
         return $image;
     }
     
+    //FlickrImage[]から似た画像を返す
     private function getSimilarImage($src,$margin)
     {
         $num = 500;
@@ -398,7 +412,7 @@ class ImageAnalizer
             foreach($flickerimages as $flickerimage)
             {
                 $image = $this->createImageByUrl($flickerimage->getUrl());
-                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1,1);
+                $average = $this->getAverageRGB($image,$flickerimage->getWidth(),$flickerimage->getHeight(),1,1,4);
                 
                 if($this->compareImage($src,$average[0][0]) < $margin)
                 {
