@@ -383,7 +383,7 @@ class ImageAnalizer
     
     private function getSimilarImage($src,$margin)
     {
-        $num = 50;
+        $num = 500;
         for(;;)
         {
             $flickerimages = $this->getFlickerImages($num,$this->page);
