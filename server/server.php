@@ -27,11 +27,14 @@
 
       public function onMessage(ConnectionInterface $from, $msg) {
           echo "msg : $msg\n";
-          foreach ($this->clients as $client) {
-              if ($from != $client) {
-                  $client->send($msg);
-              }
-          }
+          var_dump($msg);
+          $this->sendJson($from);
+        //   foreach ($this->clients as $client) {
+        //       if ($from != $client){
+        //
+        //           //$client->send($msg);
+        //       }
+        //   }
       }
 
       public function onClose(ConnectionInterface $conn) {
@@ -40,6 +43,11 @@
 
       public function onError(ConnectionInterface $conn, \Exception $e) {
           $conn->close();
+      }
+      public function sendJson(ConnectionInterface $from){
+          //チェックのため
+          $json = array('x' => 1, 'y' => 1 , 'url' => 'https://pbs.twimg.com/media/B0wx8kpCAAAfFjx.jpg');
+          $from->send(json_encode($json));
       }
   }
 

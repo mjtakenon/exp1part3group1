@@ -1,5 +1,6 @@
 console.log(location.host);
-const ws = new WebSocket('ws://localhost:9000');
+//ポート番号をはじきたかったので分割
+const ws = new WebSocket('ws://' + location.host.split(":")[0] + ':9000');
 const width  = 4;
 const height = 4;
 
@@ -64,6 +65,7 @@ $('#file_input').change(function () {
 });
 
 $('#submit_btn').on('click', function () {
+  console.log($('#file_input').get(0).files);
   ws.send($('#file_input').get(0).files);
 });
 
