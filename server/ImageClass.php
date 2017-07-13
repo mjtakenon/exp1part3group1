@@ -163,7 +163,7 @@ class ImageAnalizer
         }
         else
         {
-            $margin = 1000;
+            $margin = 500;
 
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
             
@@ -437,7 +437,7 @@ class ImageAnalizer
             {
                 //URLからリソースに変換
                 $image = $this->createImageByJpegUrl($flickrimage->getUrl());
-                
+
                 if($image === false)
                 {
                     echo "image is not set\n";
@@ -484,6 +484,7 @@ class ImageAnalizer
                     }
                 }
                 
+				$end_time = microtime(true);
             }
             ++$this->page;
         }
