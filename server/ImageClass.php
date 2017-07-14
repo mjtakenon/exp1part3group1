@@ -148,7 +148,7 @@ class ImageAnalizer
         }
         else
         {
-            $margin = 1000;
+            $margin = 500;
 
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
 
@@ -363,12 +363,13 @@ class ImageAnalizer
     private function getflickrImages($per_page,$page)
     {
         $image = array();
-        $Flickr_apikey = '600dfca58e06413caa4125ce28da02b7';
+        //$Flickr_apikey = '600dfca58e06413caa4125ce28da02b7';
+        $Flickr_apikey = '54943877e5144fdb63a83366c3549bc5';
         $Flickr_getRecent = 'https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key='.$Flickr_apikey.'&extras=url_sq&per_page='.$per_page.'&page='.$page.'&format=php_serial';
         $result = unserialize(file_get_contents($Flickr_getRecent));
         $ext = 'image/jpeg';
 
-        foreach($result['photos']['photo'] as $k => $photo){
+        foreach($result['photos']['photo'] as $photo){
             if(isset($photo['url_sq'])){
                 $url   = $photo['url_sq'];
                 $width = $photo['width_sq']-1;
@@ -405,24 +406,21 @@ class ImageAnalizer
             //array内の画像を走査
             foreach($flickrimages as $flickrimage)
             {
-                $url = $flickrimage->getUrl();
-                if(!isset($url))
-                {
-                    continue;
-                }
-
                 //URLからリソースに変換
                 $image = $this->createImageByJpegUrl($flickrimage->getUrl());
 
+                if($image === false)
+                {
+                    echo "image is not set\n";
+                    continue;
+                }
                 //リソースの平均画素値を出す
                 $average = $this->getAverageRGB($image,$flickrimage->getWidth(),$flickrimage->getHeight(),1,1,5);
 
                 //クライアントから送られた画像の分割部と照合してく
-                $x = 0;
-                foreach($src->getPixcolor() as $row)
+                foreach($src->getPixcolor() as $x => $row)
                 {
-                    $y = 0;
-                    foreach($row as $srcimg)
+                    foreach($row as $y => $srcimg)
                     {
                         //照合が終わってなく、比較結果がしきい値以下だったら
                         if($flickrarray[$x][$y] === null && $this->compareImage($srcimg,$average[0][0]) < $margin)
@@ -453,11 +451,10 @@ class ImageAnalizer
                         {
                             $count ++;
                         }
-                        ++$y;
                     }
-                    ++$x;
                 }
 
+				$end_time = microtime(true);
             }
             ++$this->page;
         }

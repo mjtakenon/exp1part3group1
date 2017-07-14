@@ -65,8 +65,16 @@ $('#file_input').change(function () {
 });
 
 $('#submit_btn').on('click', function () {
-  console.log($('#file_input').get(0).files);
-  ws.send($('#file_input').get(0).files);
+  let file = $('#file_input')[0].files[0];
+  let reader = new FileReader();
+
+  reader.onload = function () {
+    //let arr = new Uint8Array(reader.result);
+    ws.send(reader.result);
+    console.log();
+  }
+
+  reader.readAsBinaryString(file);
 });
 
 $('#mosaic > tbody').on('click', 'tr > td:not(.empty-cell)', function () {
