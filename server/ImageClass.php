@@ -21,7 +21,6 @@ class BaseImage
     public function getExt(){
         return $this->ext;
     }
-
     public function setWidth($w){
         $this->width = $w;
     }
@@ -32,16 +31,14 @@ class BaseImage
         $this->ext = $e;
     }
 }
-
 /*RGBのためのクラス*/
 class RGB
 {
     private $RGBColor = array('Red' => 0,'Green' => 0,'Blue' => 0);
-
     public function getRGB(){
         return $this->RGBColor;
     }
-    
+
     public function getR(){
         return $this->RGBColor['Red'];
     }
@@ -51,11 +48,9 @@ class RGB
     public function getB(){
         return $this->RGBColor['Blue'];
     }
-
     public function setRGB($rgb){
         $this->RGBColor = $rgb;
     }
-
     public function setR($R){
         $this->RGBColor['Red'] = $R;
     }
@@ -65,27 +60,25 @@ class RGB
     public function setB($B){
         $this->RGBColor['Blue'] = $B;
     }
-    
-}
 
+}
 //アップロード
 class ReceiveImage extends BaseImage
 {
     private $division = array('X' => 0,'Y' => 0);
     private $pixColor = null;
-
     function __construct($w,$h,$e,$dimg){
         parent::__construct($w,$h,$e);
         //echo count($dimg[0]).','.count($dimg);
         $this->setDivision(count($dimg[0]),count($dimg));
-        
+
         //for ($i=0; $i < $dy; $i++) {
-            
+
             $this->pixColor = $dimg;
             //$this->pixColor[$i] = array_fill(0,$dx,new RGB());
         //}
     }
-    
+
     public function setDivision($x,$y)
     {
         $this->division['X'] = $x;
@@ -100,7 +93,6 @@ class ReceiveImage extends BaseImage
         $this->setDivision($dimg[0],count($dimg));
         $this->pixColor = $dimg;
     }
-
     public function getDivision()
     {
         return $this->division;
@@ -110,12 +102,10 @@ class ReceiveImage extends BaseImage
         return $this->pixColor;
     }
 }
-
 class SendImage extends BaseImage
 {
     private $RGB;
     private $put = array('X' => 0,'Y' => 0);
-
     function __construct($w,$h,$e)
     {
         parent::__construct($w,$h,$e);
@@ -127,34 +117,29 @@ class SendImage extends BaseImage
         $this->division['Y'] = $y;
     }
 }
-
 class flickrImage extends BaseImage
 {
     private $url;
-    
+
     function __construct($w,$h,$e,$u)
     {
         parent::__construct($w,$h,$e);
         $this->url = $u;
     }
-
-    function getUrl() 
+    function getUrl()
     {
         return $this->url;
     }
-
     function setUrl($u)
     {
         $this->url = $u;
     }
 }
-
 class ImageAnalizer
 {
     private $m_ReceiveImage = null;
     private $save_path = '';
     private $page = 1;
-
     public function __construct($divwidth,$divheight)
     {
         if(!$this->initalize($divwidth,$divheight))
@@ -166,12 +151,12 @@ class ImageAnalizer
             $margin = 500;
 
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
-            
+
             $width = $this->m_ReceiveImage->getWidth()/$this->m_ReceiveImage->getDivision()['X'];
             $height = $this->m_ReceiveImage->getHeight()/$this->m_ReceiveImage->getDivision()['Y'];
             echo "returnd\n";
             echo '<table border="0" cellspacing="0" cellpadding="0" >'."\n";
-            
+
             foreach($flickrimages as $row)
             {
                 echo '<tr>';
@@ -184,7 +169,6 @@ class ImageAnalizer
 			echo "</table>\n";
         }
     }
-
     //初期化 成功するとtrue,失敗するとfalseを返す
     private function initalize($divwidth,$divheight)
     {
@@ -208,7 +192,6 @@ class ImageAnalizer
             echo "画像の保存ができませんでした。path=".$this->save_path."\n";
             return false;
         }
-
         //クライアントから送られた情報の表示
         echo "path=".$this->save_path."\n";
         echo "width=".$width."\n";
@@ -223,27 +206,25 @@ class ImageAnalizer
 
         //保存したローカルデータから画像の作成
         $image = $this->createImageBySavepath($mime_type);
-
         if(!$image)
         {
             echo "保存した画像を開けませんでした。\n";
             return false;
         }
-        
         //平均値を出す
         $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight,1);
 
         //受信した画像のクラスを作成
         $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$averageRGB);
-        
+
         //print_r($this->m_ReceiveImage);
         $end_time = microtime(true);
-        
+
         echo "初期化処理時間:".($end_time-$start_time)."秒 \n";
 
+        //print_r($this->m_ReceiveImage);
         return true;
     }
-
     //画像の保存 成功でtrue 失敗でfalse
     private function saveImg($ext)
     {
@@ -258,7 +239,6 @@ class ImageAnalizer
             $save_basename = $save_filename. '.'. $ext;
             $this->save_path = $_SERVER['DOCUMENT_ROOT']. $save_dir. $save_basename;
         }
-        
         if(!move_uploaded_file($_FILES['upfile']['tmp_name'],$this->save_path))
         {
             return false;
@@ -269,7 +249,7 @@ class ImageAnalizer
             return true;
         }
     }
-    
+
     //ファイル種別の判別 画像でないとotherを返す
     private function isImageFile($mime_type)
     {
@@ -287,11 +267,9 @@ class ImageAnalizer
                 return 'other';
         }
     }
-
     //save_pathより画像データの作成
     private function createImageBySavepath($mime_type)
     {
-
         switch($mime_type)
         {
             case IMAGETYPE_JPEG:
@@ -309,7 +287,7 @@ class ImageAnalizer
     private function createImageByUrl($url)
     {
         list($width,$height,$mime_type,$attr) = getimagesize($url);
-        
+
         switch($mime_type)
         {
             case IMAGETYPE_JPEG:
@@ -327,7 +305,6 @@ class ImageAnalizer
     {
         return imagecreatefromjpeg($url);
     }
-
     //画像の合計画素値をRGBで返す $xpos,$yposを左上座標に$xsize,$ysizeの大きさで,$space飛ばしで
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize,$space)
     {
@@ -346,13 +323,11 @@ class ImageAnalizer
         }
         return $sumrgb;
     }
-
     //画像の平均画素値をRGB[][]で返す $divwidth,$divheightに分割数、$spaceに間隔(間隔なしは0で)
     private function getAverageRGB($image,$width,$height,$divwidth,$divheight,$space)
     {
         $divedwidth = floor($width/$divwidth);
         $divedheight = floor($height/$divheight);
-
         $rgbarray = array();
         for($y = 0; $y < $divheight; ++$y)
         {
@@ -363,7 +338,6 @@ class ImageAnalizer
                 $rgbarray[$row][] = new RGB();
             }
         }
-
         for($y = 0; $y < $divheight; ++$y)
         {
             for($x = 0; $x < $divwidth; ++$x)
@@ -372,7 +346,6 @@ class ImageAnalizer
                 $rgbarray[$y][$x]->setRGB($rgb->getRGB());
             }
         }
-
         $allpixels = ($divedheight*$divedwidth)/pow($space,2);
 
         for($y = 0; $y < $divheight; ++$y)
@@ -386,7 +359,6 @@ class ImageAnalizer
         }
         return $rgbarray;
     }
-
     //flickrのAPIを叩いてFlickrImage[]を返す
     private function getflickrImages($per_page,$page)
     {
@@ -395,7 +367,6 @@ class ImageAnalizer
         $Flickr_apikey = '54943877e5144fdb63a83366c3549bc5';
         $Flickr_getRecent = 'https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key='.$Flickr_apikey.'&extras=url_sq&per_page='.$per_page.'&page='.$page.'&format=php_serial';
         $result = unserialize(file_get_contents($Flickr_getRecent));
-        
         $ext = 'image/jpeg';
 
         foreach($result['photos']['photo'] as $photo){
@@ -408,7 +379,7 @@ class ImageAnalizer
         }
         return $image;
     }
-    
+
     //FlickrImage[]から似た画像を返す marginは画素値の差の許容
     private function getSimilarImage($src,$margin)
     {
@@ -419,7 +390,7 @@ class ImageAnalizer
         for($y = 0; $y < $src->getDivision()['Y']; ++$y)
         {
             $flickrarray[] = array();
-            
+
             for($x = 0; $x < $src->getDivision()['X']; ++$x)
             {
                 $flickrarray[$y][] = null;
@@ -431,7 +402,7 @@ class ImageAnalizer
         {
             //Flickrの画像arrayをnum個とpageを指定して取得してくる
             $flickrimages = $this->getflickrImages($num,$this->page);
-            
+
             //array内の画像を走査
             foreach($flickrimages as $flickrimage)
             {
@@ -443,10 +414,9 @@ class ImageAnalizer
                     echo "image is not set\n";
                     continue;
                 }
-
                 //リソースの平均画素値を出す
                 $average = $this->getAverageRGB($image,$flickrimage->getWidth(),$flickrimage->getHeight(),1,1,5);
-                
+
                 //クライアントから送られた画像の分割部と照合してく
                 foreach($src->getPixcolor() as $x => $row)
                 {
@@ -483,13 +453,12 @@ class ImageAnalizer
                         }
                     }
                 }
-                
+
 				$end_time = microtime(true);
             }
             ++$this->page;
         }
     }
-
     //画像の比較 |R^2|+|G^2|+|B^2|の値を返す
     private function compareImage($src1,$src2)
     {

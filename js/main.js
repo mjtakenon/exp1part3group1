@@ -1,4 +1,6 @@
-const ws = new WebSocket('ws://' + location.host + ':9000');
+console.log(location.host);
+//ポート番号をはじきたかったので分割
+const ws = new WebSocket('ws://' + location.host.split(":")[0] + ':9000');
 const width  = 4;
 const height = 4;
 
@@ -67,12 +69,12 @@ $('#submit_btn').on('click', function () {
   let reader = new FileReader();
 
   reader.onload = function () {
-    let arr = new Uint8Array(reader.result);
-    ws.send(arr);
-    console.log(arr);
+    //let arr = new Uint8Array(reader.result);
+    ws.send(reader.result);
+    console.log();
   }
 
-  reader.readAsArrayBuffer(file);
+  reader.readAsBinaryString(file);
 });
 
 $('#mosaic > tbody').on('click', 'tr > td:not(.empty-cell)', function () {
