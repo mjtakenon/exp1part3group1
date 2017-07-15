@@ -131,7 +131,8 @@ class SendImage extends BaseImage
 class flickrImage extends BaseImage
 {
     private $url;
-    
+    private $diff;
+
     function __construct($w,$h,$e,$u)
     {
         parent::__construct($w,$h,$e);
@@ -143,9 +144,19 @@ class flickrImage extends BaseImage
         return $this->url;
     }
 
+    function getDiff()
+    {
+        return $this->diff;
+    }
+
     function setUrl($u)
     {
         $this->url = $u;
+    }
+
+    function setDiff($d)
+    {
+        $this->diff = $d;
     }
 }
 
@@ -154,6 +165,9 @@ class ImageAnalizer
     private $m_ReceiveImage = null;
     private $save_path = '';
     private $page = 1;
+
+    private $start_time;
+    private $end_time;
 
     public function __construct($divwidth,$divheight)
     {
@@ -168,7 +182,9 @@ class ImageAnalizer
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
             
             $width = $this->m_ReceiveImage->getWidth()/$this->m_ReceiveImage->getDivision()['X'];
+            $width = 75;
             $height = $this->m_ReceiveImage->getHeight()/$this->m_ReceiveImage->getDivision()['Y'];
+            $height = 75;
             echo "returnd\n";
             echo '<table border="0" cellspacing="0" cellpadding="0" >'."\n";
             
@@ -188,7 +204,7 @@ class ImageAnalizer
     //初期化 成功するとtrue,失敗するとfalseを返す
     private function initalize($divwidth,$divheight)
     {
-        $start_time = microtime(true);
+        $this->start_time = microtime(true);
 
         //画像データの取得
         list($width,$height,$mime_type,$attr) = getimagesize($_FILES['upfile']['tmp_name']);
@@ -237,9 +253,9 @@ class ImageAnalizer
         $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$averageRGB);
         
         //print_r($this->m_ReceiveImage);
-        $end_time = microtime(true);
+        $this->end_time = microtime(true);
         
-        echo "初期化処理時間:".($end_time-$start_time)."秒 \n";
+        echo "初期化処理時間:".($this->end_time-$this->start_time)."秒 \n";
 
         return true;
     }
@@ -452,10 +468,11 @@ class ImageAnalizer
                 {
                     foreach($row as $y => $srcimg)
                     {
+                        $diff = $this->compareImage($srcimg,$average[0][0]);
                         //照合が終わってなく、比較結果がしきい値以下だったら
-                        if($flickrarray[$x][$y] === null && $this->compareImage($srcimg,$average[0][0]) < $margin)
+                        if($flickrarray[$x][$y] === null && $diff < $margin)
                         {
-                            echo "diff = " .$this->compareImage($srcimg,$average[0][0]).",";
+                            echo "diff = " .$srcimg->getDiff().",";
                             echo "count = " .$count."\n";
 
                             $flickrarray[$x][$y] = $flickrimage;
@@ -477,14 +494,17 @@ class ImageAnalizer
                                 return $flickrarray;
                             }
                         }
-                        else
+                        else if($srcimg->getDiff() >= $diff)
                         {
-                            $count ++;
+                            $srcimg->setDiff($diff);
                         }
+                        $count ++;
+                        
                     }
                 }
                 
-				$end_time = microtime(true);
+                //$this->end_time = microtime(true);
+                //echo "画像走査:".($this->end_time-$this->start_time)."秒 \n";
             }
             ++$this->page;
         }
