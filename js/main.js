@@ -74,7 +74,7 @@ $('#submit_btn').on('click', function () {
 	var base64 = btoa(reader.result);
 	base64 = base64.replace(/^.*,/, '');
     ws.send(base64);
-    console.log();
+    //console.log();
   }
 
   //reader.readAsBinaryString(file);

@@ -32,8 +32,8 @@
 	      $base64 = preg_replace("/data:[^,]+,/i","",$base64);
 	      $base64 = base64_decode($base64);
 	      file_put_contents("tmp.bin", $base64);
-          echo "type : ".gettype($msg)."\nmsg : $msg \n";
-          $resource = imagecreatefromstring($base64);
+          //echo "type : ".gettype($msg)."\nmsg : $msg \n";
+          //$resource = imagecreatefromstring($base64);
           var_dump($resource);
 
           $this->sendJson($from);
