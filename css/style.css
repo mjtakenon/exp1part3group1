@@ -6,6 +6,10 @@ form {
   text-align: center;
 }
 
+form div input {
+  margin: 0 auto;
+}
+
 table {
   margin: 0 auto;
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mosaic Art Creator</title>
+  <title>Mosaic Art Generator</title>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
     crossorigin="anonymous">
@@ -23,11 +23,12 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>Mosaic Art Creator</h1>
+  <h1>Mosaic Art Generator</h1>
 
-  <h2>Input Image File</h2>
-  <form class="form-inline" enctype="multipart/form-data" action="" method="">
-    <div class="form-group">
+  <h2>Parameters &amp; Image File</h2>
+  <form enctype="multipart/form-data" action="" method="">
+    <h3>Image File</h3>
+    <div class="form-inline">
       <div class="input-group">
         <input type="file" accept="image/*" id="file_input" name="file_input" style="display: none;">
         <span class="input-group-btn">
@@ -37,11 +38,26 @@
           <input id="dummy_file" type="text" class="form-control" placeholder="select file..." disabled>
         </div>
       </div>
+      <input type="button" class="btn btn-primary" id="submit_btn" value="submit">
     </div>
-    <input type="button" class="btn btn-primary" id="submit_btn" value="submit">
+    <h3>Number of Divisions</h3>
+    <div class="form-group row">
+      <label for="width" class="col-sm-2 col-sm-offset-4 col-form-label">Horizontal</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" id="horizontal" value="64" disabled="disabled">
+        <small class="form-text text-muted">You need to select a file first!</small>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="width" class="col-sm-2 col-sm-offset-4 col-form-label">Vertical</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" id="vertical" value="4" disabled="disabled">
+        <small class="form-text text-muted">It is calculated automatically based on the number of division in the vertical axis direction.</small>
+      </div>
+    </div>
   </form>
 
-  <h2>Created Mosaic Art</h2>
+  <h2>Generated Mosaic Art</h2>
   <table id="mosaic">
     <tbody>
     </tbody>
