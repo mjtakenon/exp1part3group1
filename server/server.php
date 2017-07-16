@@ -26,8 +26,16 @@
       }
 
       public function onMessage(ConnectionInterface $from, $msg) {
-          echo "msg : $msg\n";
-          var_dump($msg);
+
+
+          $base64 = base64_decode($msg);
+	      $base64 = preg_replace("/data:[^,]+,/i","",$base64);
+	      $base64 = base64_decode($base64);
+	      file_put_contents("tmp.bin", $base64);
+          echo "type : ".gettype($msg)."\nmsg : $msg \n";
+          $resource = imagecreatefromstring($base64);
+          var_dump($resource);
+
           $this->sendJson($from);
         //   foreach ($this->clients as $client) {
         //       if ($from != $client){
@@ -46,7 +54,7 @@
       }
       public function sendJson(ConnectionInterface $from){
           //チェックのため
-          $json = array('x' => 1, 'y' => 1 , 'url' => 'https://pbs.twimg.com/media/B0wx8kpCAAAfFjx.jpg');
+          $json = array('x' => 1, 'y' => 1 , 'url' => 'https://c1.staticflickr.com/4/3667/13774932844_20d65fa27b_n.jpg');
           $from->send(json_encode($json));
       }
   }

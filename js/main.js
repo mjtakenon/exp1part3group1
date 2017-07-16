@@ -70,11 +70,15 @@ $('#submit_btn').on('click', function () {
 
   reader.onload = function () {
     //let arr = new Uint8Array(reader.result);
-    ws.send(reader.result);
+    // データURLスキームからbase64形式のバイナリデータに変換する
+	var base64 = btoa(reader.result);
+	base64 = base64.replace(/^.*,/, '');
+    ws.send(base64);
     console.log();
   }
 
-  reader.readAsBinaryString(file);
+  //reader.readAsBinaryString(file);
+  reader.readAsDataURL(file);
 });
 
 $('#mosaic > tbody').on('click', 'tr > td:not(.empty-cell)', function () {
