@@ -62,6 +62,8 @@ debug();
 
 $('#file_input').change(function () {
   $('#dummy_file').val($(this).val().replace('C:\\fakepath\\', ''));
+  if ($('#dummy_file').val !== '')
+    $("#horizontal").prop("disabled", false);
 });
 
 $('#submit_btn').on('click', function () {
