@@ -94,10 +94,10 @@ $('#submit_btn').on('click', function () {
   let reader = new FileReader();
 
   reader.onload = function () {
-    ws.send({ // 分割数を送信
-      width:  $('#horizontal').val(),
-      height: $('#vertical').val()
-    });
+    ws.send(JSON.stringify({ // 分割数を送信
+      width:  +$('#horizontal').val(),
+      height: +$('#vertical').val()
+    }));
     ws.onmessage = function (event) {
       if (event && event.data === 'ACK') // ACK を受信後 ファイルを送信
         ws.send(reader.result);
