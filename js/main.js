@@ -12,6 +12,10 @@ function init(width, height) {
     s += '</tr>'
   }
   $('#mosaic > tbody').html(s);
+  $('td').css({
+    'width':  100 / width + 'vw',
+    'height': 100 / width + 'vw',
+  });
 
   let delayTime = 0;
   for (let i = 0; i < height; i++) {
