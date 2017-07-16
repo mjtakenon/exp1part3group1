@@ -133,10 +133,14 @@ class flickrImage extends BaseImage
     private $url;
     private $diff;
 
+    private $isSended;
+
     function __construct($w,$h,$e,$u)
     {
         parent::__construct($w,$h,$e);
         $this->url = $u;
+        $this->diff = PHP_INT_MAX;
+        $this->isSended = false;
     }
 
     function getUrl() 
@@ -148,7 +152,12 @@ class flickrImage extends BaseImage
     {
         return $this->diff;
     }
-
+    
+    function getSended()
+    {
+        return $this->isSended;
+    }
+    
     function setUrl($u)
     {
         $this->url = $u;
@@ -157,6 +166,11 @@ class flickrImage extends BaseImage
     function setDiff($d)
     {
         $this->diff = $d;
+    }
+
+    function sended()
+    {
+        $this->isSended = true;
     }
 }
 
@@ -169,6 +183,11 @@ class ImageAnalizer
     private $start_time;
     private $end_time;
 
+    private $margin;
+    private $ease_time;     //画像の閾値を緩和する時間
+    private $limit_time;    //画像を必ず返す時間
+
+
     public function __construct($divwidth,$divheight)
     {
         if(!$this->initalize($divwidth,$divheight))
@@ -177,14 +196,16 @@ class ImageAnalizer
         }
         else
         {
-            $margin = 500;
+            $this->margin = 500;
+            $this->ease_time = 30;
+            $this->limit_time = 60;
 
-            $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$margin);
+            $flickrimages = $this->getSimilarImage($this->m_ReceiveImage);
             
             $width = $this->m_ReceiveImage->getWidth()/$this->m_ReceiveImage->getDivision()['X'];
-            $width = 75;
+            $width = 25;
             $height = $this->m_ReceiveImage->getHeight()/$this->m_ReceiveImage->getDivision()['Y'];
-            $height = 75;
+            $height = 25;
             echo "returnd\n";
             echo '<table border="0" cellspacing="0" cellpadding="0" >'."\n";
             
@@ -426,7 +447,7 @@ class ImageAnalizer
     }
     
     //FlickrImage[]から似た画像を返す marginは画素値の差の許容
-    private function getSimilarImage($src,$margin)
+    private function getSimilarImage($src)
     {
         $num = 500;
         $count = 1;
@@ -438,7 +459,7 @@ class ImageAnalizer
             
             for($x = 0; $x < $src->getDivision()['X']; ++$x)
             {
-                $flickrarray[$y][] = null;
+                $flickrarray[$y][] = new FlickrImage(0,0,0,0);
             }
         }
 
@@ -470,41 +491,67 @@ class ImageAnalizer
                     {
                         $diff = $this->compareImage($srcimg,$average[0][0]);
                         //照合が終わってなく、比較結果がしきい値以下だったら
-                        if($flickrarray[$x][$y] === null && $diff < $margin)
+                        if($flickrarray[$x][$y]->getSended() === false && ($diff < $this->margin || $flickrarray[$x][$y]->getDiff() < $this->margin))
                         {
-                            echo "diff = " .$srcimg->getDiff().",";
-                            echo "count = " .$count."\n";
+                            //echo "diff = " .$diff.",";
+                            //echo "count = " .$count."\n";
 
                             $flickrarray[$x][$y] = $flickrimage;
+                            $flickrarray[$x][$y]->sended();
+                            ///ここで送信
 
                             //全ての更新が終わってたらflickrarrayの配列を返す
-                            $hadNull = false;
+                            $allSended = false;
                             for($i = 0; $i < $src->getDivision()['Y']; ++$i)
                             {
                                 for($j = 0; $j < $src->getDivision()['X']; ++$j)
                                 {
-                                    if($flickrarray[$j][$i] === null)
+                                    if($flickrarray[$j][$i]->getSended() === false)
                                     {
-                                        $hadNull = true;
+                                        $allSended = true;
                                     }
                                 }
                             }
-                            if($hadNull === false)
+                            if($allSended === false)
                             {
                                 return $flickrarray;
                             }
                         }
-                        else if($srcimg->getDiff() >= $diff)
+                        //差分が更新できそうだったらしておく
+                        else if($flickrarray[$x][$y]->getDiff() >= $diff && $flickrarray[$x][$y]->getSended() === false)
                         {
-                            $srcimg->setDiff($diff);
+                            $flickrarray[$x][$y]->setDiff($diff);
+                            $flickrarray[$x][$y]->setUrl($flickrimage->getUrl());
                         }
                         $count ++;
-                        
                     }
                 }
+
+                $this->end_time = microtime(true);
                 
-                //$this->end_time = microtime(true);
-                //echo "画像走査:".($this->end_time-$this->start_time)."秒 \n";
+                
+                if($this->end_time-$this->start_time > $this->limit_time)
+                {
+                    //echo "画像走査:".$this->limit_time."秒経過 \n";
+                    //$this->margin = PHP_INT_MAX;
+                    foreach($src->getPixcolor() as $x => $row)
+                    {
+                        foreach($row as $y => $srcimg)
+                        {
+                            if($flickrarray[$x][$y]->getSended() === false)
+                            {
+                                $flickrarray[$x][$y]->sended();
+                                ///ここでも送信
+                            }
+                        }
+                    }
+                    return $flickrarray;
+                }
+                else if(($this->end_time-$this->start_time) > $this->ease_time)
+                {
+                    //echo "画像走査:".$this->ease_time."秒経過 \n";
+                    $this->margin = 1500;
+                }
             }
             ++$this->page;
         }

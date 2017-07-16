@@ -12,7 +12,7 @@
 				require('ImageClass.php');
 				if(is_uploaded_file($_FILES["upfile"]["tmp_name"]))
 				{
-					$analizer = new ImageAnalizer(4,4);
+					$analizer = new ImageAnalizer(64,64);
 				}
 				else
 				{
