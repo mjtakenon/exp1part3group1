@@ -6,6 +6,10 @@ form {
   text-align: center;
 }
 
+form div input {
+  margin: 0 auto;
+}
+
 table {
   margin: 0 auto;
 }
@@ -13,8 +17,6 @@ table {
 td {
   margin: 0;
   border: 1px #fff solid;
-  width: 100px;
-  height: 100px;
 }
 
 td.empty-cell {
