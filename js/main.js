@@ -26,6 +26,7 @@ function init(width, height) {
   }
 
   ws.onopen = onOpen;
+  ws.onmessage = onMessage;
 }
 
 function onOpen() {
@@ -101,11 +102,10 @@ $('#submit_btn').on('click', function () {
     ws.onmessage = function (event) {
       if (event && event.data === 'ACK') // ACK を受信後 ファイルを送信
         ws.send(reader.result);
+      init($('#horizontal').val(), $('#vertical').val());
     };
   }
   reader.readAsBinaryString(file);
-
-  init($('#horizontal').val(), $('#vertical').val());
 });
 
 $('#mosaic > tbody').on('click', 'tr > td:not(.empty-cell)', function () {
