@@ -34,6 +34,7 @@ function onOpen() {
 function onMessage(event) {
   if (event && event.data) {
     const d = JSON.parse(event.data);
+    console.log("get image data");
     setImage(d.x, d.y, d.url);
   }
 }
