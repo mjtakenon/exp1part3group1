@@ -19,13 +19,12 @@
   class Chat implements MessageComponentInterface {
 
       protected $clients;
-    //   private $roop;
+      private $roop;
 
       public function __construct() {
           //とりあえずハッシュマップみたいなものと考えておけばよ
           //なぜかオブジェクトをキーにデータを格納できるみたいなので、それで実行。
           $this->clients = new \SplObjectStorage;
-        //   $this->roop = $roop;
       }
 
       public function onOpen(ConnectionInterface $conn) {
@@ -47,7 +46,7 @@
           //echo "$width,$height,$mime_type,$attr";
           //$this->sendJson($from);
 
-          $analizer = new ImageAnalizer(4,4,$from,$resource);
+          $analizer = new ImageAnalizer(4,4,$from,$resource,$this);
         //   foreach ($this->clients as $client) {
         //       if ($from != $client){
         //
@@ -63,21 +62,29 @@
       public function onError(ConnectionInterface $conn, \Exception $e) {
           $conn->close();
       }
-      public static function sendJson(ConnectionInterface $from,$x,$y,$url){
+      public function setRoop($loop)
+      {
+          $this->roop = $loop;
+          echo var_dump($this->roop);
+      }
+      public function sendJson(ConnectionInterface $from,$x,$y,$url){
           //チェックのため
           $json = array('x' => $x, 'y' => $y , 'url' => $url);
           print_r($json);
           $from->send(json_encode($json));
+          $this->roop->tick();
       }
   }
   //$aa = "";
-  //$foobar = Factory::create();
+  // $loop = Factory::create();
   // $socket = new Server($loop);
-  // $socket->listen(9000);
+  // $socket->listen(9000,'10.70.241.107');
   // Run the server application through the WebSocket protocol on port 8080
-  // $server = IoServer::factory(new HttpServer(new WsServer(new Chat())));
+  // $server = IoServer::factory(new HttpServer(new WsServer(new Chat($loop))),$socket,$loop);
   // $server->run();
-  $server = IoServer::factory(new HttpServer(new WsServer(new Chat())), 9000);
+  $chat = new Chat();
+  $server = IoServer::factory(new HttpServer(new WsServer($chat)), 9000);
+  $chat->setRoop($server->loop);
+  echo "server run\n";
   $server->run();
-
 ?>

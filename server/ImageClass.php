@@ -177,7 +177,7 @@ class ImageAnalizer
     private $limit_time;    //画像を必ず返す時間
 
 
-    public function __construct($divwidth,$divheight,$from,$resource)
+    public function __construct($divwidth,$divheight,$from,$resource,$server)
     {
         if(!$this->initalize($divwidth,$divheight,$resource))
         {
@@ -189,7 +189,7 @@ class ImageAnalizer
             $this->ease_time = 30;
             $this->limit_time = 60;
 
-            $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$from);
+            $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$from,$server);
 
             $width = $this->m_ReceiveImage->getWidth()/$this->m_ReceiveImage->getDivision()['X'];
             $width = 25;
@@ -425,7 +425,7 @@ class ImageAnalizer
     }
 
     //FlickrImage[]から似た画像を返す marginは画素値の差の許容
-    private function getSimilarImage($src,$from)
+    private function getSimilarImage($src,$from,$server)
     {
         $num = 500;
         $count = 1;
@@ -476,7 +476,7 @@ class ImageAnalizer
 
                             $flickrarray[$x][$y] = $flickrimage;
                             $flickrarray[$x][$y]->sended();
-                            Chat::sendJson($from,$x,$y,$flickrimage->getUrl());
+                            $server->sendJson($from,$x,$y,$flickrimage->getUrl());
                             ///ここで送信
 
                             //全ての更新が終わってたらflickrarrayの配列を返す
@@ -521,7 +521,7 @@ class ImageAnalizer
                             {
                                 $flickrarray[$x][$y]->sended();
                                 //ここでも送信
-                                Chat::sendJson($from,$x,$y,$flickrimage->getUrl());
+                                $server->sendJson($from,$x,$y,$flickrimage->getUrl());
                             }
                         }
                     }
