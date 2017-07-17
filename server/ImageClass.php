@@ -504,7 +504,6 @@ class ImageAnalizer
 
                 $this->end_time = microtime(true);
                 
-                
                 if($this->end_time-$this->start_time > $this->limit_time)
                 {
                     //echo "画像走査:".$this->limit_time."秒経過 \n";
