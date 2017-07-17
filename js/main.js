@@ -1,6 +1,7 @@
 console.log(location.host);
 //ポート番号をはじきたかったので分割
 const ws = new WebSocket('ws://' + location.host.split(":")[0] + ':9000');
+let tdWidth;
 
 function init(width, height) {
   let s = '';
@@ -12,16 +13,15 @@ function init(width, height) {
     s += '</tr>'
   }
   $('#mosaic > tbody').html(s);
+  tdWidth = 100 / width;
   $('td').css({
-    'width':  100 / width + 'vw',
-    'height': 100 / width + 'vw',
+    'width':  tdWidth + 'vw',
+    'height': tdWidth + 'vw',
   });
 
-  let delayTime = 0;
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-      $('.y' + i + ' > .x' + j).delay(delayTime).addClass('empty-cell', 500, 'linear');
-      delayTime += 5;
+      $('.y' + i + ' > .x' + j).delay().addClass('empty-cell', 500, 'linear');
     }
   }
 
@@ -117,4 +117,22 @@ $('#mosaic > tbody').on('click', 'tr > td:not(.empty-cell)', function () {
   $('#previewModal .modal-body > img').attr('src', $(this).children('div').html());
   $('#previewModal .modal-body > a').attr('href', $(this).children('div').html());
   $('#previewModal').modal();
+});
+
+var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
+$(document).on(mousewheelevent, '#mosaic', function(e){
+  e.preventDefault();
+  var delta = e.originalEvent.deltaY ? -(e.originalEvent.deltaY) : e.originalEvent.wheelDelta ? e.originalEvent.wheelDelta : -(e.originalEvent.detail);
+  if (delta < 0){
+    // マウスホイールを下にスクロールしたときの処理
+    tdWidth -= 0.1;
+  } else {
+    // マウスホイールを上にスクロールしたときの処理
+    tdWidth += 0.1;
+  }
+
+  $('td').css({
+    'width':  tdWidth + 'vw',
+    'height': tdWidth + 'vw',
+  });
 });
