@@ -1,10 +1,8 @@
 console.log(location.host);
 //ポート番号をはじきたかったので分割
 const ws = new WebSocket('ws://' + location.host.split(":")[0] + ':9000');
-const width  = 4;
-const height = 4;
 
-function init() {
+function init(width, height) {
   let s = '';
   for (let i = 0; i < height; i++) {
     s += '<tr class="y' + i + '">'
@@ -14,16 +12,21 @@ function init() {
     s += '</tr>'
   }
   $('#mosaic > tbody').html(s);
+  $('td').css({
+    'width':  100 / width + 'vw',
+    'height': 100 / width + 'vw',
+  });
 
   let delayTime = 0;
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-      $('.y' + i + ' > .x' + j).delay(delayTime).addClass('empty-cell', 3000, 'linear');
-      delayTime += 150;
+      $('.y' + i + ' > .x' + j).delay(delayTime).addClass('empty-cell', 500, 'linear');
+      delayTime += 5;
     }
   }
 
   ws.onopen = onOpen;
+  ws.onmessage = onMessage;
 }
 
 function onOpen() {
@@ -42,7 +45,7 @@ function onMessage(event) {
 function setImage(x, y, url) {
   const e = $('.y' + y + ' > .x' + x);
   e.removeClass('empty-cell', 1500, 'linear', function () { // 消えるアニメーション
-    e.children('div').html(url);
+    e.children('div').html(url.replace(/_s\.jpg$/, '_c.jpg')); // 大きな画像へのリンクを設定 (flickrの場合)
     e.css({ // 追加する部分のCSS
       background: 'url(' + url + ')',
       'background-size': 'cover',
@@ -58,27 +61,55 @@ function debug() {
   setImage(2, 2, 'https://pbs.twimg.com/media/B0wx8kpCAAAfFjx.jpg');
 }
 
-init();
-debug();
+// debug();
 
+const _URL = window.URL || window.webkitURL;
+let imgWidth, imgHeight;
 $('#file_input').change(function () {
   $('#dummy_file').val($(this).val().replace('C:\\fakepath\\', ''));
+  if ($('#dummy_file').val() !== '')
+    $("#horizontal").prop("disabled", false); // #horizontal の disabled を解除
+
+  let file, img;
+  if ((file = this.files[0])) {
+    img = new Image();
+    img.onload = function () {
+      imgWidth  = this.width;
+      imgHeight = this.height;
+      $('#vertical').val(+Math.round($('#horizontal').val() * (imgHeight / imgWidth)));
+    };
+    img.src = _URL.createObjectURL(file);
+  }
+});
+
+$(document).on('keyup change', '#horizontal', function () {
+  $('#vertical').val(+Math.round($('#horizontal').val() * (imgHeight / imgWidth)));
 });
 
 $('#submit_btn').on('click', function () {
+  if ($('#dummy_file').val() === '') {
+    alert('You need to select a file first!');
+    return;
+  }
+
   let file = $('#file_input')[0].files[0];
   let reader = new FileReader();
 
   reader.onload = function () {
-    //let arr = new Uint8Array(reader.result);
-    // データURLスキームからbase64形式のバイナリデータに変換する
-	var base64 = btoa(reader.result);
-	base64 = base64.replace(/^.*,/, '');
-    ws.send(base64);
-    //console.log();
+    ws.send(JSON.stringify({ // 分割数を送信
+      width:  +$('#horizontal').val(),
+      height: +$('#vertical').val()
+    }));
+    ws.onmessage = function (event) {
+      console.log(event);
+      if (event && event.data === 'ACK'){
+          var base64 = btoa(reader.result);
+          base64 = base64.replace(/^.*,/, '');
+            ws.send(base64);
+      } // ACK を受信後 ファイルを送信
+      init($('#horizontal').val(), $('#vertical').val());
+    };
   }
-
-  //reader.readAsBinaryString(file);
   reader.readAsDataURL(file);
 });
 

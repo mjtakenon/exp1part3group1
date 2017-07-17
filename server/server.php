@@ -33,20 +33,27 @@
 
       public function onMessage(ConnectionInterface $from, $msg) {
 
-
-          $base64 = base64_decode($msg);
-	      $base64 = preg_replace("/data:[^,]+,/i","",$base64);
-	      $base64 = base64_decode($base64);
-	      file_put_contents("tmp.bin", $base64);
-          //echo "type : ".gettype($msg)."\nmsg : $msg \n";
-          $resource = imagecreatefromstring($base64);
-          //var_dump($resource);
-
-          //list($width,$height,$mime_type,$attr) = getimagesize("tmp.bin");
-          //echo "$width,$height,$mime_type,$attr";
-          //$this->sendJson($from);
-
-          $analizer = new ImageAnalizer(4,4,$from,$resource,$this);
+          var_dump($msg);
+          var_dump($this->clients[$from]);
+          if (is_null($this->clients[$from])) {
+              $this->setDivision($from,$msg);
+          }
+          else {
+              $this->imageanalize($from,$msg);
+          }
+        //   $base64 = base64_decode($msg);
+	    //   $base64 = preg_replace("/data:[^,]+,/i","",$base64);
+	    //   $base64 = base64_decode($base64);
+	    //   file_put_contents("tmp.bin", $base64);
+        //   //echo "type : ".gettype($msg)."\nmsg : $msg \n";
+        //   $resource = imagecreatefromstring($base64);
+        //   //var_dump($resource);
+          //
+        //   //list($width,$height,$mime_type,$attr) = getimagesize("tmp.bin");
+        //   //echo "$width,$height,$mime_type,$attr";
+        //   //$this->sendJson($from);
+          //
+        //   $analizer = new ImageAnalizer(4,4,$from,$resource,$this);
         //   foreach ($this->clients as $client) {
         //       if ($from != $client){
         //
@@ -66,6 +73,20 @@
       {
           $this->roop = $loop;
           echo var_dump($this->roop);
+      }
+      public function setDivision($from,$msg)
+      {
+          $this->clients[$from] = json_decode($msg,true);
+          $from->send("ACK");
+      }
+      public function imageanalize($from,$msg){
+          $base64 = base64_decode($msg);
+	      $base64 = preg_replace("/data:[^,]+,/i","",$base64);
+	      $base64 = base64_decode($base64);
+	      file_put_contents("tmp.bin", $base64);
+          $resource = imagecreatefromstring($base64);
+          $div = $this->clients[$from];
+          $analizer = new ImageAnalizer($div['width'],$div['height'],$from,$resource,$this);
       }
       public function sendJson(ConnectionInterface $from,$x,$y,$url){
           //チェックのため
