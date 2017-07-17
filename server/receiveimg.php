@@ -19,9 +19,9 @@
 					echo "ファイルが選択されていません。\n";
 				}
 				$end_time = microtime(true);
-				echo "総処理時間:".($end_time-$start_time)."秒\n";
+				//echo "総処理時間:".($end_time-$start_time)."秒\n";
 			?>
-			
+
 			</pre>
 	</body>
 

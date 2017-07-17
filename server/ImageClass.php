@@ -123,7 +123,7 @@ class flickrImage extends BaseImage
     private $diff;
 
     private $isSended;
-    
+
 
     function __construct($w,$h,$e,$u)
     {
@@ -136,18 +136,18 @@ class flickrImage extends BaseImage
     {
         return $this->url;
     }
-    
+
     function getDiff()
     {
         return $this->diff;
     }
-    
+
     function getSended()
     {
         return $this->isSended;
     }
-    
-    
+
+
     function setUrl($u)
     {
         $this->url = $u;
@@ -168,7 +168,7 @@ class ImageAnalizer
     private $m_ReceiveImage = null;
     private $save_path = '';
     private $page = 1;
-    
+
     private $start_time;
     private $end_time;
 
@@ -177,9 +177,9 @@ class ImageAnalizer
     private $limit_time;    //画像を必ず返す時間
 
 
-    public function __construct($divwidth,$divheight)
+    public function __construct($divwidth,$divheight,$from,$resource,$server)
     {
-        if(!$this->initalize($divwidth,$divheight))
+        if(!$this->initalize($divwidth,$divheight,$resource))
         {
             echo '画像の初期化に失敗しました。\n';
         }
@@ -189,7 +189,7 @@ class ImageAnalizer
             $this->ease_time = 30;
             $this->limit_time = 60;
 
-            $flickrimages = $this->getSimilarImage($this->m_ReceiveImage);
+            $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$from,$server);
 
             $width = $this->m_ReceiveImage->getWidth()/$this->m_ReceiveImage->getDivision()['X'];
             $width = 25;
@@ -211,12 +211,13 @@ class ImageAnalizer
         }
     }
     //初期化 成功するとtrue,失敗するとfalseを返す
-    private function initalize($divwidth,$divheight)
+    private function initalize($divwidth,$divheight,$resource)
     {
         $this->start_time = microtime(true);
 
         //画像データの取得
-        list($width,$height,$mime_type,$attr) = getimagesize($_FILES['upfile']['tmp_name']);
+        //list($width,$height,$mime_type,$attr) = getimagesize($_FILES['upfile']['tmp_name']);
+        list($width,$height,$mime_type,$attr) = getimagesize("tmp.bin");
 
         //画像ファイル種別の取得
         $ext = $this->isImageFile($mime_type);
@@ -228,13 +229,13 @@ class ImageAnalizer
         }
 
         //画像をimages/に保存
-        if(!$this->saveImg($ext))
-        {
-            echo "画像の保存ができませんでした。path=".$this->save_path."\n";
-            return false;
-        }
+        // if(!$this->saveImg($ext))
+        // {
+        //     echo "画像の保存ができませんでした。path=".$this->save_path."\n";
+        //     return false;
+        // }
         //クライアントから送られた情報の表示
-        echo "path=".$this->save_path."\n";
+        //echo "path=".$this->save_path."\n";
         echo "width=".$width."\n";
         echo "height=".$height."\n";
         echo "ext=".$ext."\n";
@@ -246,24 +247,25 @@ class ImageAnalizer
         echo "divedheight=".floor($height/$divheight)."\n";
 
         //保存したローカルデータから画像の作成
-        $image = $this->createImageBySavepath($mime_type);
-        if(!$image)
-        {
-            echo "保存した画像を開けませんでした。\n";
-            return false;
-        }
+        // $image = $this->createImageBySavepath($mime_type);
+        // if(!$image)
+        // {
+        //     echo "保存した画像を開けませんでした。\n";
+        //     return false;
+        // }
+
         //平均値を出す
-        $averageRGB = $this->getAverageRGB($image,$width,$height,$divwidth,$divheight,1);
+        $averageRGB = $this->getAverageRGB($resource,$width,$height,$divwidth,$divheight,1);
 
         //受信した画像のクラスを作成
         $this->m_ReceiveImage = new ReceiveImage($width,$height,$ext,$averageRGB);
 
         //print_r($this->m_ReceiveImage);
-        
+
         $this->end_time = microtime(true);
-        
+
         echo "初期化処理時間:".($this->end_time-$this->start_time)."秒 \n";
-        
+
         //print_r($this->m_ReceiveImage);
         return true;
     }
@@ -423,7 +425,7 @@ class ImageAnalizer
     }
 
     //FlickrImage[]から似た画像を返す marginは画素値の差の許容
-    private function getSimilarImage($src)
+    private function getSimilarImage($src,$from,$server)
     {
         $num = 500;
         $count = 1;
@@ -439,6 +441,7 @@ class ImageAnalizer
             }
         }
 
+        echo "set image array\n";
         //ページ最後まで探索してもなかったら繰り返す
         for(;;)
         {
@@ -473,6 +476,7 @@ class ImageAnalizer
 
                             $flickrarray[$x][$y] = $flickrimage;
                             $flickrarray[$x][$y]->sended();
+                            $server->sendJson($from,$x,$y,$flickrimage->getUrl());
                             ///ここで送信
 
                             //全ての更新が終わってたらflickrarrayの配列を返す
@@ -503,8 +507,8 @@ class ImageAnalizer
                 }
 
                 $this->end_time = microtime(true);
-                
-                
+
+
                 if($this->end_time-$this->start_time > $this->limit_time)
                 {
                     //echo "画像走査:".$this->limit_time."秒経過 \n";
@@ -516,7 +520,8 @@ class ImageAnalizer
                             if($flickrarray[$x][$y]->getSended() === false)
                             {
                                 $flickrarray[$x][$y]->sended();
-                                ///ここでも送信
+                                //ここでも送信
+                                $server->sendJson($from,$x,$y,$flickrimage->getUrl());
                             }
                         }
                     }
@@ -527,7 +532,7 @@ class ImageAnalizer
                     //echo "画像走査:".$this->ease_time."秒経過 \n";
                     $this->margin = 1500;
                 }
-                
+
             }
             ++$this->page;
         }

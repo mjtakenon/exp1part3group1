@@ -37,6 +37,7 @@ function onOpen() {
 function onMessage(event) {
   if (event && event.data) {
     const d = JSON.parse(event.data);
+    console.log("get image data");
     setImage(d.x, d.y, d.url);
   }
 }
@@ -100,12 +101,16 @@ $('#submit_btn').on('click', function () {
       height: +$('#vertical').val()
     }));
     ws.onmessage = function (event) {
-      if (event && event.data === 'ACK') // ACK を受信後 ファイルを送信
-        ws.send(reader.result);
+      console.log(event);
+      if (event && event.data === 'ACK'){
+          var base64 = btoa(reader.result);
+          base64 = base64.replace(/^.*,/, '');
+            ws.send(base64);
+      } // ACK を受信後 ファイルを送信
       init($('#horizontal').val(), $('#vertical').val());
     };
   }
-  reader.readAsBinaryString(file);
+  reader.readAsDataURL(file);
 });
 
 $('#mosaic > tbody').on('click', 'tr > td:not(.empty-cell)', function () {
