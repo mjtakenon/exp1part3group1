@@ -185,9 +185,9 @@ class ImageAnalizer
         }
         else
         {
-            $this->margin = 500;
-            $this->ease_time = 30;
-            $this->limit_time = 60;
+            $this->margin = 100;
+            $this->ease_time = 60;
+            $this->limit_time = 120;
 
             $flickrimages = $this->getSimilarImage($this->m_ReceiveImage,$from,$server);
 
@@ -521,7 +521,7 @@ class ImageAnalizer
                             {
                                 $flickrarray[$y][$x]->sended();
                                 //ここでも送信
-                                $server->sendJson($from,$x,$y,$flickrimage->getUrl());
+                                $server->sendJson($from,$x,$y,$flickrarray[$y][$x]->getUrl());
                             }
                         }
                     }
@@ -530,7 +530,7 @@ class ImageAnalizer
                 else if(($this->end_time-$this->start_time) > $this->ease_time)
                 {
                     //echo "画像走査:".$this->ease_time."秒経過 \n";
-                    $this->margin = 1500;
+                    $this->margin = 200;
                 }
 
             }
