@@ -21,12 +21,7 @@ function init(width, height) {
 
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-<<<<<<< HEAD
-      $('.y' + i + ' > .x' + j).delay(delayTime).addClass('empty-cell', 3000, 'linear');
-      delayTime += 10;
-=======
       $('.y' + i + ' > .x' + j).delay().addClass('empty-cell', 500, 'linear');
->>>>>>> 52e6f9ec19b4b88a4586c181d12eb28d276423fc
     }
   }
 

@@ -265,6 +265,8 @@ class ImageAnalizer
         $this->end_time = microtime(true);
 
         echo "初期化処理時間:".($this->end_time-$this->start_time)."秒 \n";
+        
+        $this->start_time = microtime(true);
 
         //print_r($this->m_ReceiveImage);
         return true;
@@ -396,9 +398,9 @@ class ImageAnalizer
         {
             for($x = 0; $x < $divwidth; ++$x)
             {
-                $rgbarray[$x][$y]->setR(floor($rgbarray[$x][$y]->getR()/$allpixels));
-                $rgbarray[$x][$y]->setG(floor($rgbarray[$x][$y]->getG()/$allpixels));
-                $rgbarray[$x][$y]->setB(floor($rgbarray[$x][$y]->getB()/$allpixels));
+                $rgbarray[$y][$x]->setR(floor($rgbarray[$y][$x]->getR()/$allpixels));
+                $rgbarray[$y][$x]->setG(floor($rgbarray[$y][$x]->getG()/$allpixels));
+                $rgbarray[$y][$x]->setB(floor($rgbarray[$y][$x]->getB()/$allpixels));
             }
         }
         return $rgbarray;
@@ -463,19 +465,19 @@ class ImageAnalizer
                 $average = $this->getAverageRGB($image,$flickrimage->getWidth(),$flickrimage->getHeight(),1,1,5);
 
                 //クライアントから送られた画像の分割部と照合してく
-                foreach($src->getPixcolor() as $x => $row)
+                foreach($src->getPixcolor() as $y => $row)
                 {
-                    foreach($row as $y => $srcimg)
+                    foreach($row as $x => $srcimg)
                     {
                         $diff = $this->compareImage($srcimg,$average[0][0]);
                         //照合が終わってなく、比較結果がしきい値以下だったら
-                        if($flickrarray[$x][$y]->getSended() === false && ($diff < $this->margin || $flickrarray[$x][$y]->getDiff() < $this->margin))
+                        if($flickrarray[$y][$x]->getSended() === false && ($diff < $this->margin || $flickrarray[$y][$x]->getDiff() < $this->margin))
                         {
                             //echo "diff = " .$diff.",";
                             //echo "count = " .$count."\n";
 
-                            $flickrarray[$x][$y] = $flickrimage;
-                            $flickrarray[$x][$y]->sended();
+                            $flickrarray[$y][$x] = $flickrimage;
+                            $flickrarray[$y][$x]->sended();
                             $server->sendJson($from,$x,$y,$flickrimage->getUrl());
                             ///ここで送信
 
@@ -485,7 +487,7 @@ class ImageAnalizer
                             {
                                 for($j = 0; $j < $src->getDivision()['X']; ++$j)
                                 {
-                                    if($flickrarray[$j][$i]->getSended() === false)
+                                    if($flickrarray[$i][$j]->getSended() === false)
                                     {
                                         $allSended = true;
                                     }
@@ -497,33 +499,27 @@ class ImageAnalizer
                             }
                         }
                         //差分が更新できそうだったらしておく
-                        else if($flickrarray[$x][$y]->getDiff() >= $diff && $flickrarray[$x][$y]->getSended() === false)
+                        else if($flickrarray[$y][$x]->getDiff() >= $diff && $flickrarray[$y][$x]->getSended() === false)
                         {
-                            $flickrarray[$x][$y]->setDiff($diff);
-                            $flickrarray[$x][$y]->setUrl($flickrimage->getUrl());
+                            $flickrarray[$y][$x]->setDiff($diff);
+                            $flickrarray[$y][$x]->setUrl($flickrimage->getUrl());
                         }
                         $count ++;
                     }
                 }
 
                 $this->end_time = microtime(true);
-<<<<<<< HEAD
-                
-=======
-
-
->>>>>>> 52e6f9ec19b4b88a4586c181d12eb28d276423fc
                 if($this->end_time-$this->start_time > $this->limit_time)
                 {
                     //echo "画像走査:".$this->limit_time."秒経過 \n";
                     //$this->margin = PHP_INT_MAX;
-                    foreach($src->getPixcolor() as $x => $row)
+                    foreach($src->getPixcolor() as $y => $row)
                     {
-                        foreach($row as $y => $srcimg)
+                        foreach($row as $x => $srcimg)
                         {
-                            if($flickrarray[$x][$y]->getSended() === false)
+                            if($flickrarray[$y][$x]->getSended() === false)
                             {
-                                $flickrarray[$x][$y]->sended();
+                                $flickrarray[$y][$x]->sended();
                                 //ここでも送信
                                 $server->sendJson($from,$x,$y,$flickrimage->getUrl());
                             }
