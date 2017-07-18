@@ -41,25 +41,6 @@
           else {
               $this->imageanalize($from,$msg);
           }
-        //   $base64 = base64_decode($msg);
-	    //   $base64 = preg_replace("/data:[^,]+,/i","",$base64);
-	    //   $base64 = base64_decode($base64);
-	    //   file_put_contents("tmp.bin", $base64);
-        //   //echo "type : ".gettype($msg)."\nmsg : $msg \n";
-        //   $resource = imagecreatefromstring($base64);
-        //   //var_dump($resource);
-          //
-        //   //list($width,$height,$mime_type,$attr) = getimagesize("tmp.bin");
-        //   //echo "$width,$height,$mime_type,$attr";
-        //   //$this->sendJson($from);
-          //
-        //   $analizer = new ImageAnalizer(4,4,$from,$resource,$this);
-        //   foreach ($this->clients as $client) {
-        //       if ($from != $client){
-        //
-        //           //$client->send($msg);
-        //       }
-        //   }
       }
 
       public function onClose(ConnectionInterface $conn) {
@@ -87,6 +68,7 @@
           $resource = imagecreatefromstring($base64);
           $div = $this->clients[$from];
           $analizer = new ImageAnalizer($div['width'],$div['height'],$from,$resource,$this);
+          $this->clients[$from] = null;
       }
       public function sendJson(ConnectionInterface $from,$x,$y,$url){
           //チェックのため
