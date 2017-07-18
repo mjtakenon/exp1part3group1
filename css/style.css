@@ -16,7 +16,7 @@ table {
 
 td {
   margin: 0;
-  border: 1px #fff solid;
+  border: 0px #fff solid;
 }
 
 td.empty-cell {
