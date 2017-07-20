@@ -349,7 +349,14 @@ class ImageAnalizer
     //urlより画像データの作成(jpgのみ)
     private function createImageByJpegUrl($url)
     {
-        return imagecreatefromjpeg($url);
+	if(pathinfo($url)['extension'] == 'jpg')
+	{
+	    return imagecreatefromjpeg($url);
+	}
+	else
+	{
+	    return false;
+	}
     }
     //画像の合計画素値をRGBで返す $xpos,$yposを左上座標に$xsize,$ysizeの大きさで,$space飛ばしで
     private function getSumRGB($image,$xpos,$ypos,$xsize,$ysize,$space)
