@@ -18,16 +18,13 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
     crossorigin="anonymous"></script>
-  <!-- Socket.IO 2.0.3 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <h1>Mosaic Art Generator</h1>
 
-  <h2>Parameters &amp; Image File</h2>
   <form enctype="multipart/form-data" action="" method="">
-    <h3>Image File</h3>
+    <h2>Image File</h2>
     <div class="form-inline">
       <div class="input-group">
         <input type="file" accept="image/*" id="file_input" name="file_input" style="display: none;">
@@ -40,7 +37,7 @@
       </div>
       <input type="button" class="btn btn-primary" id="submit_btn" value="submit">
     </div>
-    <h3>Number of Divisions</h3>
+    <h2>Number of Divisions</h2>
     <div class="form-group row">
       <label for="width" class="col-sm-2 col-sm-offset-4 col-form-label">Horizontal</label>
       <div class="col-sm-2">
@@ -51,7 +48,7 @@
     <div class="form-group row">
       <label for="width" class="col-sm-2 col-sm-offset-4 col-form-label">Vertical</label>
       <div class="col-sm-2">
-        <input type="number" class="form-control" id="vertical" value="4" disabled="disabled">
+        <input type="number" class="form-control" id="vertical" value="64" disabled="disabled">
         <small class="form-text text-muted">It is calculated automatically based on the number of division in the horizontal axis direction.</small>
       </div>
     </div>
