@@ -1,7 +1,17 @@
-http://inf-exp1.azurewebsites.net/server/index.html
+# MosaicArtGenerator
 
-sawada
-http://exp1-syussi.azurewebsites.net/server/index.html
+## Requirements
 
-mjtakenon
-http://exp1-mjtakenon.azurewebsites.net/server/index.html
+- php
+- php-gd
+
+## Usage
+
+Run following command on server.
+
+```bash
+$ cd /path/to/project
+$ php server/server.php
+```
+
+Then access to `http://[domain name]/path/to/project/index.html` from your browser.
